@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="config-server" />
+        <module name="post-service" />
+        <module name="comment-service" />
+        <module name="training-service" />
+        <module name="gateway-service" />
+        <module name="common-module" />
+        <module name="exercise-service" />
+        <module name="invoices-service" />
+        <module name="user-service" />
+        <module name="order-service" />
+        <module name="service-registry" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="common-moduel" target="21" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="comment-service" options="-parameters" />
+      <module name="common-moduel" options="-parameters" />
+      <module name="common-module" options="-parameters" />
+      <module name="config-server" options="-parameters" />
+      <module name="exercise-service" options="-parameters" />
+      <module name="gateway-service" options="-parameters" />
+      <module name="invoices-service" options="-parameters" />
+      <module name="order-service" options="-parameters" />
+      <module name="post-service" options="-parameters" />
+      <module name="service-registry" options="-parameters" />
+      <module name="training-service" options="-parameters" />
+      <module name="user-service" options="-parameters" />
+    </option>
+  </component>
+</project>

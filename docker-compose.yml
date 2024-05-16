@@ -1,0 +1,95 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres-container-awbd
+    environment:
+      POSTGRES_DB: wellness
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+    ports:
+      - "5544:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - awbd
+    restart: unless-stopped
+  postgres-invoices:
+    image: postgres:latest
+    container_name: postgres-container-invoices-awbd
+    environment:
+      POSTGRES_DB: wellness
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+    ports:
+      - "5545:5432"
+    volumes:
+      - postgres_data_invoices:/var/lib/postgresql/data
+    networks:
+      - awbd
+    restart: unless-stopped
+
+  # utilites
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin-container-awbd
+    ports:
+      - "9411:9411"
+    networks:
+      - awbd
+    restart: unless-stopped
+
+
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq-container-awbd
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - awbd
+    restart: unless-stopped
+
+  #config server
+  config-server:
+    container_name: config-server-container-awbd
+    build:
+      context: ./config-server
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8888"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - awbd
+    restart: unless-stopped
+
+    #eureka server
+    # https://github.com/spring-projects/spring-boot/issues/35683
+  eureka:
+    container_name: eureka-container-awbd
+    build:
+      context: ./service-registry
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+    environment:
+      # nu ia nici profilul
+      SPRING_PROFILES_ACTIVE: docker
+    #      SPRING_CONFIG_IMPORT: configserver:http://config-server-container-awbd:8888/
+    #      SPRING_APPLICATION_NAME: service-registry
+    networks:
+      - awbd
+    #    restart: unless-stopped
+    depends_on:
+      - config-server
+
+volumes:
+  postgres_data:
+  postgres_data_invoices:
+networks:
+  awbd:
+    driver: bridge
