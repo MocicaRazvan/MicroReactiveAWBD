@@ -26,7 +26,7 @@ public class BasicUserProvider implements HandleUserProvider {
     public Mono<AuthResponse> saveOrUpdateUserProvider(AuthProvider provider, UserCustom user) {
         return userRepository.findByEmail(user.getEmail())
                 .log()
-                .flatMap(u -> generateResponse(u, provider))
+                .flatMap(u -> generateResponse(u, u.getProvider()))
                 .switchIfEmpty(userRepository.save(user)
                         .flatMap(u -> generateResponse(u, provider)));
     }

@@ -25,8 +25,8 @@ public class UserCustom extends IdGenerated {
     private String email;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private Role role = Role.ROLE_USER;
 
     @Enumerated(EnumType.STRING)
-    private AuthProvider provider;
+    private AuthProvider provider = AuthProvider.LOCAL;
 }

@@ -31,7 +31,8 @@ public class RouteValidator {
             "/training-service/v3/api-docs",
             "/order-service/v3/api-docs",
             "/webjars/**",
-            "/favicon.ico", "/auth/github/callback", "/auth/resetPassword", "/auth/changePassword");
+            "/favicon.ico", "/auth/github/callback", "/auth/google/callback", "/auth/google/login",
+            "/auth/resetPassword", "/auth/changePassword");
 
     private static final List<String> TRAINER_LIST = List.of("/test/trainer",
 

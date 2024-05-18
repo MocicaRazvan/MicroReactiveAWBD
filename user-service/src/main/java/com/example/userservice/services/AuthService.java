@@ -17,4 +17,6 @@ public interface AuthService {
     Mono<TokenValidationResponse> validateToken(TokenValidationRequest tokenValidationRequest);
 
     Mono<AuthResponse> handleGithubCallback(CallbackBody callbackBody);
+
+    Mono<AuthResponse> handleGoogleCallback(CallbackBody callbackBody, String codeVerifier);
 }

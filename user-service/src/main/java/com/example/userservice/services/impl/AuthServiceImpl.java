@@ -12,53 +12,34 @@ import com.example.userservice.exceptions.UserWithEmailExists;
 import com.example.commonmodule.exceptions.common.UsernameNotFoundException;
 import com.example.userservice.jwt.JwtUtils;
 import com.example.userservice.mappers.UserMapper;
-import com.example.userservice.models.JwtToken;
 import com.example.userservice.models.UserCustom;
 import com.example.userservice.repositories.JwtTokenRepository;
 import com.example.userservice.repositories.UserRepository;
 import com.example.userservice.services.AuthService;
-import com.example.userservice.services.OauthUserInfoHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.OAuth2AccessToken;
-import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
-import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @Slf4j
 public class AuthServiceImpl extends BasicUserProvider implements AuthService {
 
 
-    @Value("${git.client.secret}")
-    private String gitClientSecret;
-
-    @Value("${git.client.id}")
-    private String gitClientId;
-
-    @Value("${git.redirect.uri}")
-    private String gitRedirectUri;
-
     private final WebClient.Builder webClient;
     private final PasswordEncoder passwordEncoder;
-
     private final GithubUserService githubUserService;
+    private final GoogleUserService googleUserService;
 
-    public AuthServiceImpl(UserRepository userRepository, JwtTokenRepository jwtTokenRepository, JwtUtils jwtUtil, UserMapper userMapper, WebClient.Builder webClient, PasswordEncoder passwordEncoder, GithubUserService githubUserService) {
+
+    public AuthServiceImpl(UserRepository userRepository, JwtTokenRepository jwtTokenRepository, JwtUtils jwtUtil, UserMapper userMapper, WebClient.Builder webClient, PasswordEncoder passwordEncoder, GithubUserService githubUserService, GoogleUserService googleUserService) {
         super(userRepository, jwtTokenRepository, jwtUtil, userMapper);
         this.webClient = webClient;
         this.passwordEncoder = passwordEncoder;
         this.githubUserService = githubUserService;
+        this.googleUserService = googleUserService;
     }
 
     @Override
@@ -158,7 +139,12 @@ public class AuthServiceImpl extends BasicUserProvider implements AuthService {
 
     @Override
     public Mono<AuthResponse> handleGithubCallback(CallbackBody callbackBody) {
-        return githubUserService.getOAuthService(webClient, this).handleProviderCallback(callbackBody);
+        return githubUserService.getOAuthService(webClient, this).handleProviderCallback(callbackBody, null);
+    }
+
+    @Override
+    public Mono<AuthResponse> handleGoogleCallback(CallbackBody callbackBody, String codeVerifier) {
+        return googleUserService.getOAuthService(webClient, this).handleProviderCallback(callbackBody, codeVerifier);
     }
 
     // make it generic and then call the func with the provider and the uri

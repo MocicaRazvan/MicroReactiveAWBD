@@ -22,6 +22,8 @@ public class OauthUserInfoFactoryImpl implements OauthUserInfoFactory {
         switch (provider) {
             case GITHUB:
                 return new GithubUserInfo(webClientBuilder, handleUserProvider);
+            case GOOGLE:
+                return new GoogleUserInfo(webClientBuilder, handleUserProvider);
             default:
                 throw new IllegalArgumentException("Unsupported AuthProvider: " + provider);
         }

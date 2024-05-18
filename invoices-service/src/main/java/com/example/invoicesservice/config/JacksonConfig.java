@@ -17,4 +17,6 @@ public class JacksonConfig {
                 .modules(new Jackson2HalModule(), new JavaTimeModule()
                 ).build();
     }
+
+    
 }

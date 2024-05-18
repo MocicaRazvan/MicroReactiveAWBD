@@ -30,5 +30,14 @@ CREATE TABLE IF NOT EXISTS password_reset_token
     created_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     expires_in_seconds BIGINT        NOT NULL
-)
+);
+
+CREATE TABLE IF NOT EXISTS oauth_state
+(
+    id            SERIAL PRIMARY KEY,
+    state         VARCHAR(255) NOT NULL UNIQUE,
+    code_verifier VARCHAR(255) NOT NULL,
+    created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 

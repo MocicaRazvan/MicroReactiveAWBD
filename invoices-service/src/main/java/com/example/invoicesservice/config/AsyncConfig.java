@@ -17,6 +17,7 @@ public class AsyncConfig {
         executor.setCorePoolSize(4);
         executor.setMaxPoolSize(8);
         executor.setQueueCapacity(500);
+        executor.setThreadNamePrefix("invoices-");
         executor.initialize();
         return executor;
     }

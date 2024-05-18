@@ -14,4 +14,6 @@ import lombok.NoArgsConstructor;
 public class CallbackBody {
     @NotEmpty(message = "code is required")
     private String code;
+
+    private String state;
 }

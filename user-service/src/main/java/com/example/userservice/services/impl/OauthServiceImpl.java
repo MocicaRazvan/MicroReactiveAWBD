@@ -7,21 +7,23 @@ import com.example.userservice.services.HandleUserProvider;
 import com.example.userservice.services.OauthService;
 import com.example.userservice.services.OauthUserInfoFactory;
 import com.example.userservice.services.OauthUserInfoHandler;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
-import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.Function;
 
 
 @RequiredArgsConstructor
@@ -37,23 +39,48 @@ public class OauthServiceImpl implements OauthService {
     protected final WebClient.Builder webClient;
     protected final OauthUserInfoFactory oauthUserInfoFactory;
     protected final HandleUserProvider handleUserProvider;
+    protected final Function<String, Map<String, String>> parseBody;
+
 
     @Override
-    public Mono<OAuth2AccessTokenResponse> exchangeToken(String code) {
+    public Mono<OAuth2AccessTokenResponse> exchangeToken(String code, Function<String, Map<String, String>> parseBody, String codeVerifier) {
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add(OAuth2ParameterNames.CLIENT_ID, clientId);
+        formData.add(OAuth2ParameterNames.CLIENT_SECRET, clientSecret);
+        formData.add(OAuth2ParameterNames.CODE, code);
+        formData.add(OAuth2ParameterNames.GRANT_TYPE, "authorization_code");
+        formData.add(OAuth2ParameterNames.REDIRECT_URI, redirectUri);
+        formData.add("access_type", "offline");
+        if (codeVerifier != null) {
+            formData.add("code_verifier", codeVerifier);
+        }
+
         return webClient.build().post()
                 .uri(tokenUri)
                 .header("Accept", MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .bodyValue(Map.of(
-                        OAuth2ParameterNames.CLIENT_ID, clientId,
-                        OAuth2ParameterNames.CLIENT_SECRET, clientSecret,
-                        OAuth2ParameterNames.CODE, code,
-                        OAuth2ParameterNames.GRANT_TYPE, "authorization_code",
-                        OAuth2ParameterNames.REDIRECT_URI, redirectUri
-                ))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(BodyInserters.fromFormData(formData))
                 .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> {
+                    log.error("Client error during token exchange: {}", clientResponse);
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> {
+                                log.error("Error body: {}", errorBody);
+                                return Mono.error(new RuntimeException("4xx error during token exchange: " + errorBody));
+                            });
+
+                })
+                .onStatus(HttpStatusCode::is5xxServerError, clientResponse -> {
+                    log.error("Server error during token exchange: {}", clientResponse);
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> {
+                                log.error("Error body: {}", errorBody);
+                                return Mono.error(new RuntimeException("5xx error during token exchange: " + errorBody));
+                            });
+                })
                 .bodyToMono(String.class)
                 .flatMap(body -> {
-                    Map<String, String> params = UriComponentsBuilder.fromUriString("/?" + body).build().getQueryParams().toSingleValueMap();
+                    Map<String, String> params = parseBody.apply(body);
                     OAuth2AccessTokenResponse accessTokenResponse = OAuth2AccessTokenResponse.withToken(params.get("access_token"))
                             .tokenType(OAuth2AccessToken.TokenType.BEARER)
                             .expiresIn(Long.parseLong(params.getOrDefault("expires_in", "36000")))
@@ -86,8 +113,8 @@ public class OauthServiceImpl implements OauthService {
     }
 
     @Override
-    public Mono<AuthResponse> handleProviderCallback(CallbackBody callbackBody) {
-        return exchangeToken(callbackBody.getCode())
+    public Mono<AuthResponse> handleProviderCallback(CallbackBody callbackBody, String codeVerifier) {
+        return exchangeToken(callbackBody.getCode(), parseBody, codeVerifier)
                 .flatMap(this::createOauth2JwtToken);
     }
 }
