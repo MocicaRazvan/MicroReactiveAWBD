@@ -39,7 +39,6 @@ services:
     restart: unless-stopped
 
 
-
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq-container-awbd
@@ -77,15 +76,180 @@ services:
     ports:
       - "8761:8761"
     environment:
-      # nu ia nici profilul
+      # nu ia nici profilul de fapt e de la config trb cu optional la default e cv gen the edgo pt nextjs
       SPRING_PROFILES_ACTIVE: docker
-    #      SPRING_CONFIG_IMPORT: configserver:http://config-server-container-awbd:8888/
+      #      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-container-awbd:8761/eureka
+
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
     #      SPRING_APPLICATION_NAME: service-registry
     networks:
       - awbd
-    #    restart: unless-stopped
+    restart: unless-stopped
     depends_on:
       - config-server
+
+    # gateway
+  gateway-service:
+    container_name: gateway-container-awbd
+    build:
+      context: ./gateway-service
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      #aceeasi problema cu config
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+    networks:
+      - awbd
+    restart: unless-stopped
+    depends_on:
+      - eureka
+      - config-server
+      - zipkin
+  # user-service
+  user-service:
+    container_name: user-container-awbd
+    build:
+      context: .
+      dockerfile: user-service/Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+    #      openapi.service.url: http://localhost:8080
+    networks:
+      - awbd
+    restart: unless-stopped
+    depends_on:
+      - eureka
+      - config-server
+      - zipkin
+      - postgres
+  #comment service
+  comment-service:
+    container_name: comment-container-awbd
+    build:
+      context: .
+      dockerfile: comment-service/Dockerfile
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+    networks:
+      - awbd
+    restart: unless-stopped
+    depends_on:
+      - eureka
+      - config-server
+      - zipkin
+      - postgres
+    # exercise service
+  exercise-service:
+    container_name: exercise-container-awbd
+    build:
+      context: .
+      dockerfile: exercise-service/Dockerfile
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+    networks:
+      - awbd
+    restart: unless-stopped
+    depends_on:
+      - eureka
+      - config-server
+      - zipkin
+      - postgres
+    # invoice service
+  invoices-service:
+    container_name: invoices-container-awbd
+    build:
+      context: invoices-service
+      dockerfile: Dockerfile
+    ports:
+      - "8087:8087"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+    networks:
+      - awbd
+    restart: unless-stopped
+    depends_on:
+      - eureka
+      - config-server
+      - zipkin
+      - rabbitmq
+      - postgres-invoices
+  # order service
+  order-service:
+    container_name: order-container-awbd
+    build:
+      context: .
+      dockerfile: order-service/Dockerfile
+    ports:
+      - "8086:8086"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+    networks:
+      - awbd
+    restart: unless-stopped
+    depends_on:
+      - eureka
+      - config-server
+      - zipkin
+      - postgres
+      - rabbitmq
+
+  # post service
+  post-service:
+    container_name: post-container-awbd
+    build:
+      context: .
+      dockerfile: post-service/Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+    networks:
+      - awbd
+    restart: unless-stopped
+    depends_on:
+      - eureka
+      - config-server
+      - zipkin
+      - postgres
+
+  # post service
+  training-service:
+    container_name: training-container-awbd
+    build:
+      context: .
+      dockerfile: training-service/Dockerfile
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+    networks:
+      - awbd
+    restart: unless-stopped
+    depends_on:
+      - eureka
+      - config-server
+      - zipkin
+      - postgres
+
+
+
+
+
 
 volumes:
   postgres_data:
