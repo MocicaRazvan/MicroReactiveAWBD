@@ -1,4 +1,4 @@
-package com.example.userservice.dtos.password;
+package com.example.userservice.dtos.otp;
 
 
 import jakarta.validation.constraints.NotEmpty;
@@ -10,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class ResetPasswordRequest extends ForgotPasswordRequest {
+public class ResetPasswordRequest extends OTPRequest {
     @NotEmpty(message = "Token should be not empty!")
     private String token;
     @NotEmpty(message = "New password should be not empty!")

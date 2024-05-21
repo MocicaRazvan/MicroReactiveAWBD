@@ -5,6 +5,7 @@ import com.example.commonmodule.controllers.UserController;
 import com.example.commonmodule.dtos.PageableBody;
 import com.example.commonmodule.dtos.UserBody;
 import com.example.commonmodule.dtos.UserDto;
+import com.example.commonmodule.enums.AuthProvider;
 import com.example.commonmodule.enums.Role;
 import com.example.commonmodule.hateos.CustomEntityModel;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +47,7 @@ public class UserDtoAssembler implements ReactiveRepresentationModelAssembler<Us
                                                 .page(0)
                                                 .size(10)
                                                 .sortingCriteria(Map.of("email", "asc"))
-                                                .build(), "raz", Set.of(Role.ROLE_USER, Role.ROLE_TRAINER)))
+                                                .build(), "raz", Set.of(Role.ROLE_USER, Role.ROLE_TRAINER), Set.of(AuthProvider.GOOGLE)))
                                 .withRel(IanaLinkRelations.COLLECTION)
                                 .toMono()
                                 .doOnNext(model::add).then(Mono.just(model)))

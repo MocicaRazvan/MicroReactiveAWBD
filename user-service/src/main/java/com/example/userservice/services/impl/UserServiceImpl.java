@@ -5,6 +5,7 @@ import com.example.commonmodule.dtos.PageableBody;
 import com.example.commonmodule.dtos.UserBody;
 import com.example.commonmodule.dtos.UserDto;
 import com.example.commonmodule.dtos.response.PageableResponse;
+import com.example.commonmodule.enums.AuthProvider;
 import com.example.commonmodule.enums.Role;
 import com.example.commonmodule.exceptions.action.IllegalActionException;
 import com.example.commonmodule.exceptions.action.PrivateRouteException;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,30 +47,35 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Flux<PageableResponse<UserDto>> getAllUsers(PageableBody pageableBody, String email, Set<Role> roles) {
+    public Flux<PageableResponse<UserDto>> getAllUsers(PageableBody pageableBody, String email, Set<Role> roles,
+                                                       Set<AuthProvider> providers) {
 
         final String emailToSearch = email == null ? "" : email;
 
-        if (roles == null) {
-            roles = new HashSet<>();
-        }
+        Set<Role> finalRoles = handleEnum(roles, Role.class);
+        Set<AuthProvider> finalProviders = handleEnum(providers, AuthProvider.class);
 
-        if (roles.isEmpty()) {
-            roles.add(Role.ROLE_USER);
-            roles.add(Role.ROLE_ADMIN);
-            roles.add(Role.ROLE_TRAINER);
-        }
         log.info(pageableBody.getSortingCriteria().toString());
         log.info(allowedSortingFields.toString());
 
-        final Set<Role> finalRoles = roles;
         return pageableUtilsCustom.isSortingCriteriaValid(pageableBody.getSortingCriteria(), allowedSortingFields)
                 .then(pageableUtilsCustom.createPageRequest(pageableBody))
-                .flatMapMany(pr -> pageableUtilsCustom.createPageableResponse(userRepository.findAllByEmailContainingIgnoreCaseAndRoleIn(emailToSearch, finalRoles, pr).map(userMapper::fromUserCustomToUserDto),
-                        userRepository.countAllByEmailContainingIgnoreCaseAndRoleIn(emailToSearch, finalRoles), pr)
+                .flatMapMany(pr -> pageableUtilsCustom.createPageableResponse(userRepository.findAllByEmailContainingIgnoreCaseAndRoleInAndProviderIn(emailToSearch, finalRoles,
+                                finalProviders, pr).map(userMapper::fromUserCustomToUserDto),
+                        userRepository.countAllByEmailContainingIgnoreCaseAndRoleInAndProviderIn(emailToSearch, finalRoles, finalProviders), pr)
                 );
 
 
+    }
+
+    private <T extends Enum<T>> Set<T> handleEnum(Set<T> items, Class<T> enumClass) {
+        if (items == null) {
+            items = EnumSet.noneOf(enumClass);
+        }
+        if (items.isEmpty()) {
+            items.addAll(EnumSet.allOf(enumClass));
+        }
+        return items;
     }
 
 

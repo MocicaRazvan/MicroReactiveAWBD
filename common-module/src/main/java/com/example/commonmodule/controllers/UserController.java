@@ -4,6 +4,7 @@ import com.example.commonmodule.dtos.PageableBody;
 import com.example.commonmodule.dtos.UserBody;
 import com.example.commonmodule.dtos.UserDto;
 import com.example.commonmodule.dtos.response.PageableResponse;
+import com.example.commonmodule.enums.AuthProvider;
 import com.example.commonmodule.enums.Role;
 import com.example.commonmodule.hateos.CustomEntityModel;
 import jakarta.validation.Valid;
@@ -26,7 +27,7 @@ public interface UserController {
 
     Flux<PageableResponse<CustomEntityModel<UserDto>>> getAllUsers(
             @Valid @RequestBody PageableBody pageableBody, @RequestParam(required = false) String email,
-            @RequestParam(required = false) Set<Role> roles
+            @RequestParam(required = false) Set<Role> roles, @RequestParam(required = false) Set<AuthProvider> providers
 
     );
 

@@ -25,38 +25,9 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class EmailUtilsImpl implements EmailUtils {
 
-//    @Value("${sendgrid.api.key}")
-//    private String sendGridApiKey;
-//
-//    @Value("${sendgrid.sender}")
-//    private String sendGridSender;
 
     private final JavaMailSender mailSender;
 
-//    @Override
-//    public Mono<Void> sendEmail(String to, String subject, String content) {
-//        Email from = new Email(sendGridSender);
-//        Email toEmail = new Email(to);
-//        Content contentEmail = new Content("text/html", content);
-//        Mail mail = new Mail(from, subject, toEmail, contentEmail);
-//
-//        SendGrid sendGrid = new SendGrid(sendGridApiKey);
-//        Request request = new Request();
-//
-//        try {
-//            request.setMethod(Method.POST);
-//            request.setEndpoint("mail/send");
-//            request.setBody(mail.build());
-//            Response response = sendGrid.api(request);
-//            log.info("Email sent to: " + to + " with status code: " + response.getStatusCode());
-//
-//            return Mono.empty();
-//        } catch (Exception ex) {
-//            log.error("Error sending email to: " + to, ex);
-//            return Mono.error(ex);
-//        }
-//
-//    }
 
     @Override
     public Mono<Void> sendEmail(String to, String subject, String content) {

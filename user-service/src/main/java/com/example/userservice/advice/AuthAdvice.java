@@ -4,6 +4,7 @@ package com.example.userservice.advice;
 import com.example.commonmodule.advices.BaseExceptionMapping;
 import com.example.commonmodule.dtos.errors.BaseErrorResponse;
 import com.example.commonmodule.exceptions.common.UsernameNotFoundException;
+import com.example.userservice.exceptions.EmailAlreadyVerified;
 import com.example.userservice.exceptions.StateNotFound;
 import com.example.userservice.exceptions.UserWithEmailExists;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -36,6 +37,11 @@ public class AuthAdvice extends BaseExceptionMapping {
 
     @ExceptionHandler(StateNotFound.class)
     public Mono<ResponseEntity<BaseErrorResponse>> handleStateNotFound(StateNotFound e, ServerWebExchange exchange) {
+        return handleWithMessage(HttpStatus.BAD_REQUEST, e, exchange);
+    }
+
+    @ExceptionHandler(EmailAlreadyVerified.class)
+    public Mono<ResponseEntity<BaseErrorResponse>> handleEmailAlreadyVerified(EmailAlreadyVerified e, ServerWebExchange exchange) {
         return handleWithMessage(HttpStatus.BAD_REQUEST, e, exchange);
     }
 

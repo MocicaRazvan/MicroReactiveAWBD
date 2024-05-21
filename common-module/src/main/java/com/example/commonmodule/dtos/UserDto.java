@@ -34,4 +34,6 @@ public class UserDto extends IdDto {
     private AuthProvider provider;
 
     private String image;
+
+    private boolean emailVerified;
 }

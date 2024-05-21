@@ -41,6 +41,9 @@ public class UserCustom extends IdGenerated {
     @Column("provider")
     private AuthProvider provider;
 
+    @Column("is_email_verified")
+    private boolean emailVerified;
+
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }

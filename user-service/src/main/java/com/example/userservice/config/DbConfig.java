@@ -1,7 +1,6 @@
 package com.example.userservice.config;
 
-import com.example.userservice.convertors.RoleReadingConvertor;
-import com.example.userservice.convertors.RoleWritingConvertor;
+import com.example.userservice.convertors.*;
 import io.r2dbc.spi.ConnectionFactories;
 import io.r2dbc.spi.ConnectionFactory;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +28,11 @@ public class DbConfig extends AbstractR2dbcConfiguration {
     protected List<Object> getCustomConverters() {
         return Arrays.asList(
                 new RoleReadingConvertor(),
-                new RoleWritingConvertor()
+                new RoleWritingConvertor(),
+                new AuthProviderReadingConvertor(),
+                new AuthProviderWritingConvertor(),
+                new OTPTypeReadingConvertor(),
+                new OTPTypeWritingConverter()
 
         );
     }

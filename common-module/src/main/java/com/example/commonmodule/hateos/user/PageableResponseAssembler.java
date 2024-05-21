@@ -4,6 +4,7 @@ package com.example.commonmodule.hateos.user;
 import com.example.commonmodule.controllers.UserController;
 import com.example.commonmodule.dtos.PageableBody;
 import com.example.commonmodule.dtos.response.PageableResponse;
+import com.example.commonmodule.enums.AuthProvider;
 import com.example.commonmodule.enums.Role;
 import com.example.commonmodule.hateos.CustomEntityModel;
 import lombok.Getter;
@@ -44,7 +45,7 @@ public abstract class PageableResponseAssembler<T, D extends ReactiveRepresentat
                         .page(0)
                         .size(10)
                         .sortingCriteria(Map.of("email", "asc"))
-                        .build(), "raz", Set.of(Role.ROLE_USER, Role.ROLE_TRAINER))).withSelfRel());
+                        .build(), "raz", Set.of(Role.ROLE_USER, Role.ROLE_TRAINER), Set.of(AuthProvider.GOOGLE))).withSelfRel());
         return toModel(pageableResponse, links);
     }
 

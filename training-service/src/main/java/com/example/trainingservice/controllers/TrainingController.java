@@ -26,6 +26,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.List;
 
 @RestController
@@ -46,6 +47,7 @@ public class TrainingController implements ApproveController
     public Flux<PageableResponse<CustomEntityModel<TrainingResponse>>> getModelsApproved(
             @RequestParam(required = false) String title, @Valid @RequestBody PageableBody pageableBody, ServerWebExchange exchange) {
         return trainingService.getModelsApproved(title, pageableBody, requestsUtils.extractAuthUser(exchange))
+//                .delayElements(Duration.ofSeconds(2))
                 .flatMap(m -> trainingReactiveResponseBuilder.toModelPageable(m, TrainingController.class));
     }
 

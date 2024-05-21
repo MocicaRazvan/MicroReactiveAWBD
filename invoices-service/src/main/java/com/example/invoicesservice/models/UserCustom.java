@@ -29,4 +29,7 @@ public class UserCustom extends IdGenerated {
 
     @Enumerated(EnumType.STRING)
     private AuthProvider provider = AuthProvider.LOCAL;
+
+    @Column(name = "is_email_verified")
+    private boolean emailVerified;
 }

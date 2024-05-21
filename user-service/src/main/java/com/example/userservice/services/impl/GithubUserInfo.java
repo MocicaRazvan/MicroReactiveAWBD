@@ -39,6 +39,7 @@ public class GithubUserInfo implements OauthUserInfoHandler {
                 .role(Role.ROLE_USER)
                 .provider(provider)
                 .image(userInfo.get("avatar_url").toString())
+                .emailVerified(true)
                 .build();
 
         String email = userInfo.getOrDefault("email", "") != null ? userInfo.get("email").toString() : "";

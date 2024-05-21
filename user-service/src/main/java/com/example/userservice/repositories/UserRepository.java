@@ -16,9 +16,9 @@ import java.util.Set;
 @Repository
 public interface UserRepository extends R2dbcRepository<UserCustom, Long> {
 
-    Flux<UserCustom> findAllByEmailContainingIgnoreCaseAndRoleIn(String email, Set<Role> roles, PageRequest pageRequest);
+    Flux<UserCustom> findAllByEmailContainingIgnoreCaseAndRoleInAndProviderIn(String email, Set<Role> roles, Set<AuthProvider> providers, PageRequest pageRequest);
 
-    Mono<Long> countAllByEmailContainingIgnoreCaseAndRoleIn(String email, Set<Role> roles);
+    Mono<Long> countAllByEmailContainingIgnoreCaseAndRoleInAndProviderIn(String email, Set<Role> roles, Set<AuthProvider> providers);
 
     Mono<UserCustom> findByEmail(String email);
 

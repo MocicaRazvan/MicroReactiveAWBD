@@ -35,6 +35,7 @@ public class GoogleUserInfo implements OauthUserInfoHandler {
                 .provider(provider)
                 .image(picture)
                 .email(email)
+                .emailVerified(true)
                 .build();
         return handleUserProvider.saveOrUpdateUserProvider(provider, user);
 

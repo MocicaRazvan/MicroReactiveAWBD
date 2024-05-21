@@ -1,9 +1,8 @@
-package com.example.userservice.dtos.password;
+package com.example.userservice.dtos.otp;
 
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -12,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class ForgotPasswordRequest {
+public class OTPRequest {
 
     @NotEmpty(message = "Email should be not empty!")
     private String email;

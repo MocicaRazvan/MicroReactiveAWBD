@@ -1,6 +1,7 @@
 package com.example.userservice.models;
 
 import com.example.commonmodule.models.ManyToOneUser;
+import com.example.userservice.enums.OTPType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,9 +15,12 @@ import org.springframework.data.relational.core.mapping.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@Table("password_reset_token")
-public class PasswordResetToken extends ManyToOneUser {
+@Table("otp_token")
+public class OTPToken extends ManyToOneUser {
     private String token;
     @Column("expires_in_seconds")
     private long expiresInSeconds;
+
+    private OTPType type;
+
 }
