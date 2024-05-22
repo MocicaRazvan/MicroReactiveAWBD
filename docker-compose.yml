@@ -226,7 +226,7 @@ services:
       - zipkin
       - postgres
 
-  # post service
+  # training service
   training-service:
     container_name: training-container-awbd
     build:
@@ -246,9 +246,19 @@ services:
       - zipkin
       - postgres
 
-
-
-
+  #nextjs
+  nextjs:
+    container_name: nextjs-container-awbd
+    build:
+      context: client-micro
+      dockerfile: Dockerfile
+    networks:
+      - awbd
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - gateway-service
 
 
 volumes:

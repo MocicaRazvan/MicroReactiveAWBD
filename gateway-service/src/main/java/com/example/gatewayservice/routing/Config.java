@@ -26,7 +26,9 @@ public class Config {
             @Value("${front.url}") String frontUrl
     ) {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin(frontUrl);
+
+        Arrays.asList(frontUrl.split(",")).forEach(configuration::addAllowedOrigin);
+
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.addAllowedHeader("*");
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type", "Accept", "X-Requested-With", "Origin"));
