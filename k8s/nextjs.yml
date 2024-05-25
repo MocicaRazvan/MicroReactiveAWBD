@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextjs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nextjs
+  template:
+    metadata:
+      labels:
+        app: nextjs
+    spec:
+      containers:
+        - name: nextjs
+          image: razvanmocica/nextjs:latest
+          ports:
+            - containerPort: 3000
+      #              hostPort: 3000
+      initContainers:
+        - name: wait-for-gateway-service
+          image: busybox
+          command: [ 'sh', '-c', 'until nc -z gateway-service 8080; do echo waiting for gateway-service; sleep 2; done;' ]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nextjs
+spec:
+  #  type: ClusterIP
+  type: LoadBalancer
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30000
+  selector:
+    app: nextjs

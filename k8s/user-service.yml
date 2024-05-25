@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+        - name: user-service
+          image: razvanmocica/user-service:latest
+          ports:
+            - containerPort: 8081
+          #              hostPort: 8081
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: k8s
+      initContainers:
+        - name: wait-for-config-server
+          image: busybox
+          command: [ 'sh', '-c', 'until nc -z config-server 8888; do echo waiting for config-server; sleep 2; done;' ]
+        - name: wait-for-eureka
+          image: busybox
+          command: [ 'sh', '-c', 'until nc -z eureka 8761; do echo waiting for eureka; sleep 2; done;' ]
+        - name: wait-for-postgres
+          image: busybox
+          command: [ 'sh', '-c', 'until nc -z postgres 5432; do echo waiting for postgres; sleep 2; done;' ]
+        - name: wait-for-zipkin
+          image: busybox
+          command: [ 'sh', '-c', 'until nc -z zipkin 9411; do echo waiting for zipkin; sleep 2; done;' ]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+spec:
+  #  type: ClusterIP
+  type: LoadBalancer
+  ports:
+    - port: 8081
+      targetPort: 8081
+  selector:
+    app: user-service

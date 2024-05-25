@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-invoices-pv
+  labels:
+    app: postgres-invoices
+spec:
+  storageClassName: "standard"
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /mnt/data/postgres-invoices
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-invoices
+spec:
+  serviceName: "postgres-invoices"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-invoices
+  template:
+    metadata:
+      labels:
+        app: postgres-invoices
+    spec:
+      containers:
+        - name: postgres-invoices
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: wellness
+            - name: POSTGRES_USER
+              value: myuser
+            - name: POSTGRES_PASSWORD
+              value: mypassword
+          volumeMounts:
+            - name: postgres-invoices-storage
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-invoices-storage
+        labels:
+          app: postgres-invoices
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 10Gi
+        selector:
+          matchLabels:
+            app: postgres-invoices
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-invoices
+spec:
+  selector:
+    app: postgres-invoices
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432

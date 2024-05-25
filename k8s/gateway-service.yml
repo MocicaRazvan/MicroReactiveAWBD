@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-service
+  template:
+    metadata:
+      labels:
+        app: gateway-service
+    spec:
+      containers:
+        - name: gateway-service
+          image: razvanmocica/gateway-service:latest
+          ports:
+            - containerPort: 8080
+          #              hostPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: k8s
+      initContainers:
+        - name: wait-for-eureka
+          image: busybox
+          command: [ 'sh', '-c', 'until nc -z eureka 8761; do echo waiting for eureka; sleep 2; done;' ]
+        - name: wait-for-zipkin
+          image: busybox
+          command: [ 'sh', '-c', 'until nc -z zipkin 9411; do echo waiting for zipkin; sleep 2; done;' ]
+        - name: wait-for-config-server
+          image: busybox
+          command: [ 'sh', '-c', 'until nc -z config-server 8888; do echo waiting for config-server; sleep 2; done;' ]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-service
+spec:
+  #  type: ClusterIP
+  type: LoadBalancer
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30080
+  selector:
+    app: gateway-service

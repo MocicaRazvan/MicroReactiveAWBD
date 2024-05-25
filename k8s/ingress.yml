@@ -1,0 +1,112 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: microservices-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    ingress.kubernetes.io/add-base-url: "true"
+
+spec:
+  rules:
+    - host: localhost
+      http:
+        paths:
+          - path: /eureka(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: eureka
+                port:
+                  number: 8761
+          # for css still not working
+          #          - path: /eureka/eureka(/|$)(.*)
+          #            pathType: ImplementationSpecific
+          #            backend:
+          #              service:
+          #                name: eureka
+          #                port:
+          #                  number: 8761
+          - path: /config(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: config-server
+                port:
+                  number: 8888
+          - path: /comment(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: comment-service
+                port:
+                  number: 8083
+          - path: /exercise(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: exercise-service
+                port:
+                  number: 8084
+          - path: /gateway(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: gateway-service
+                port:
+                  number: 8080
+          - path: /invoices(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: invoices-service
+                port:
+                  number: 8087
+          - path: /order(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: order-service
+                port:
+                  number: 8086
+          - path: /post(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: post-service
+                port:
+                  number: 8082
+          - path: /training(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: training-service
+                port:
+                  number: 8085
+          - path: /user(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: user-service
+                port:
+                  number: 8081
+          - path: /zipkin(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: zipkin
+                port:
+                  number: 9411
+          - path: /rabbitmq(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: rabbitmq
+                port:
+                  number: 15672
+          - path: /nextjs(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: nextjs
+                port:
+                  number: 3000
