@@ -10,6 +10,7 @@ spec:
     storage: 10Gi
   accessModes:
     - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
   hostPath:
     path: /mnt/data/postgres-invoices
 ---
@@ -35,11 +36,20 @@ spec:
             - containerPort: 5432
           env:
             - name: POSTGRES_DB
-              value: wellness
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-common-config
+                  key: POSTGRES_DB
             - name: POSTGRES_USER
-              value: myuser
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-common-config
+                  key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
-              value: mypassword
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-common-config
+                  key: POSTGRES_PASSWORD
           volumeMounts:
             - name: postgres-invoices-storage
               mountPath: /var/lib/postgresql/data
