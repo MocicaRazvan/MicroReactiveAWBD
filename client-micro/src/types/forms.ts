@@ -119,6 +119,10 @@ export function createCheckoutSchema(currentTotalPrice: number) {
     .and(createConfirmPriceSchema(currentTotalPrice));
 }
 
+export const conversationMessageSchema = z.object({
+  content: z.string().min(1, "Message must be at least 1 character"),
+});
+
 export type BasicFormProps = {
   submitText?: string;
   header?: string;
@@ -139,6 +143,7 @@ export type ConfirmPriceType = z.infer<
   ReturnType<typeof createConfirmPriceSchema>
 >;
 export type CheckoutType = z.infer<ReturnType<typeof createCheckoutSchema>>;
+export type ConversationMessageType = z.infer<typeof conversationMessageSchema>;
 
 export const tags = [
   "#wellness",

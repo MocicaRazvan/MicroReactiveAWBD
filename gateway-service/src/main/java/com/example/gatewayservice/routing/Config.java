@@ -36,6 +36,7 @@ public class Config {
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
 
@@ -81,6 +82,15 @@ public class Config {
                 .route("invoice-service", r -> r.path("/invoices/**")
                         .filters(f -> f.filter(authFilter))
                         .uri("lb://invoice-service"))
+                .route("websocket-service-ws", r -> r.path("/ws/**")
+                        .filters(f -> f.stripPrefix(1)
+                                .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE")
+                                .dedupeResponseHeader("Access-Control-Allow-Credentials", "RETAIN_UNIQUE")
+                        )
+                        .uri("lb://websocket-service"))
+                .route("websocket-service-http", r -> r.path("/ws-http/**")
+                        .filters(f -> f.stripPrefix(1))
+                        .uri("lb://websocket-service"))
 
 
                 .route("user-openapi", r -> r.path("/user-service/v3/api-docs")
@@ -97,6 +107,8 @@ public class Config {
                         .uri("lb://order-service"))
                 .route("invoice-openapi", r -> r.path("/invoice-service/v3/api-docs")
                         .uri("lb://invoice-service"))
+                .route("websocket-openapi", r -> r.path("/websocket-service/v3/api-docs")
+                        .uri("lb://websocket-service"))
 
                 .build();
     }

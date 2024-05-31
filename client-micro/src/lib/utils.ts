@@ -110,3 +110,18 @@ export function getCSSVariableValue(variableName: string) {
 export function roundToDecimalPlaces(value: number, decimalPlaces: number) {
   return Math.round(value * 10 ** decimalPlaces) / 10 ** decimalPlaces;
 }
+
+export function addOnlyUnique<T>(
+  arr: T[],
+  item: T,
+  comparator: (a: T, b: T) => boolean,
+  filter?: (a: T) => boolean,
+): T[] {
+  if (filter) {
+    arr = arr.filter(filter);
+  }
+  if (!arr.some((el) => comparator(el, item))) {
+    arr.push(item);
+  }
+  return arr;
+}

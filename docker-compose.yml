@@ -13,6 +13,7 @@ services:
     networks:
       - awbd
     restart: unless-stopped
+
   postgres-invoices:
     image: postgres:latest
     container_name: postgres-container-invoices-awbd
@@ -24,6 +25,21 @@ services:
       - "5545:5432"
     volumes:
       - postgres_data_invoices:/var/lib/postgresql/data
+    networks:
+      - awbd
+    restart: unless-stopped
+
+  postgres-messages:
+    image: postgres:latest
+    container_name: postgres-container-messages-awbd
+    environment:
+      POSTGRES_DB: wellness
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+    ports:
+      - "5546:5432"
+    volumes:
+      - postgres_data_messages:/var/lib/postgresql/data
     networks:
       - awbd
     restart: unless-stopped
@@ -264,6 +280,7 @@ services:
 volumes:
   postgres_data:
   postgres_data_invoices:
+  postgres_data_messages:
 networks:
   awbd:
     driver: bridge

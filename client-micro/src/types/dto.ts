@@ -167,3 +167,53 @@ export interface TrainingResponseWithOrderCount extends TrainingResponse {
   orderCount: number;
   user: UserDto;
 }
+
+export type ConnectedStatus = "ONLINE" | "OFFLINE";
+
+export interface ConversationUserBase {
+  email: string;
+  connectedStatus: ConnectedStatus;
+}
+
+export interface ConversationUserPayload extends ConversationUserBase {
+  connectedChatRoomId?: number;
+}
+
+export interface ConnectUserPayload {
+  connectedStatus: ConnectedStatus;
+}
+
+export interface ChatRoomPayload {
+  users: ConversationUserBase[];
+}
+
+export interface ChatRoomResponse {
+  id: number;
+  users: ConversationUserResponse[];
+}
+
+export interface ConversationUserResponse extends ConversationUserBase {
+  id: number;
+  connectedChatRoom?: ChatRoomResponse;
+}
+
+export interface ChatMessagePayload {
+  senderEmail: string;
+  receiverEmail: string;
+  chatRoomId: number;
+  content: string;
+}
+
+export interface ChatMessageResponse {
+  id: number;
+  sender: ConversationUserResponse;
+  receiver: ConversationUserResponse;
+  chatRoom: ChatRoomResponse;
+  content: string;
+  timestamp: string;
+}
+
+export interface ChatRoomUserDto {
+  chatId: number;
+  userEmail: string;
+}
