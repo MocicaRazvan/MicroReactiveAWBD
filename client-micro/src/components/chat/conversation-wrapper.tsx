@@ -33,7 +33,7 @@ export default function ConversationWrapper({
   }
   if (!isFinished) return <LoadingSpinner />;
 
-  console.log("messages", messages);
+  // console.log("messages", messages);
 
   return (
     <div className="min-h-[1000px]  w-full rounded-lg border-2 ">

@@ -2,11 +2,14 @@ import { AuthProvider, Role } from "./fetch-utils";
 
 export interface IdDto {
   id: number;
+}
+
+export interface IdDtoTime extends IdDto {
   createdAt: string;
   updatedAt: string;
 }
 
-export interface WithUser extends IdDto {
+export interface WithUser extends IdDtoTime {
   userId: number;
 }
 
@@ -53,7 +56,7 @@ export interface ResponseWithChildListEntity<E, C> {
   children: C[];
 }
 
-export interface UserDto extends IdDto {
+export interface UserDto extends IdDtoTime {
   firstName: string;
   lastName: string;
   email: string;
@@ -216,4 +219,40 @@ export interface ChatMessageResponse {
 export interface ChatRoomUserDto {
   chatId: number;
   userEmail: string;
+}
+
+export interface NotificationTemplateBody<E extends string> {
+  senderEmail: string;
+  receiverEmail: string;
+  type?: E;
+  referenceId: number;
+  content: string;
+  extraLink: string;
+}
+
+export type ChatMessageNotificationType = "NEW_MESSAGE";
+
+export interface ChatMessageNotificationBody
+  extends NotificationTemplateBody<ChatMessageNotificationType> {}
+
+export interface NotificationTemplateResponse<R extends IdDto, E extends string>
+  extends IdDto {
+  sender: ConversationUserResponse;
+  receiver: ConversationUserResponse;
+  type: E;
+  reference: R;
+  content: string;
+  extraLink: string;
+  timestamp: string;
+}
+
+export interface ChatMessageNotificationResponse
+  extends NotificationTemplateResponse<
+    ChatRoomResponse,
+    ChatMessageNotificationType
+  > {}
+
+export interface SenderTypeDto<E extends string> {
+  senderEmail: string;
+  type: E;
 }

@@ -14,6 +14,7 @@ export interface UseFetchStreamProps {
   arrayQueryParam?: Record<string, string[]>;
   cache?: RequestCache;
   acceptHeader?: AcceptHeader;
+  useAbortController?: boolean;
 }
 
 interface UseFetchStreamReturn<T, E> {
@@ -33,6 +34,7 @@ export function useFetchStream<T = any, E extends BaseError = BaseError>({
   cache = "no-cache",
   arrayQueryParam = {},
   acceptHeader = "application/x-ndjson",
+  useAbortController = true,
 }: UseFetchStreamProps): UseFetchStreamReturn<T, E> {
   const [messages, setMessages] = useState<T[]>([]);
   const [error, setError] = useState<E | null>(null);
@@ -86,7 +88,11 @@ export function useFetchStream<T = any, E extends BaseError = BaseError>({
 
     return () => {
       try {
-        if (abortController && !abortController.signal.aborted)
+        if (
+          useAbortController &&
+          abortController &&
+          !abortController.signal.aborted
+        )
           abortController.abort();
       } catch (e) {
         console.log(e);

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChatRoomResponse } from "@/types/dto";
+import { ChatRoomResponse, ConversationUserResponse } from "@/types/dto";
 import { Dispatch, memo, SetStateAction, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Session } from "next-auth";
@@ -15,12 +15,12 @@ interface BaseProps {
 
 interface ChatRoomProps extends BaseProps {
   chatRooms: ChatRoomResponse[];
-  setActiveRoom: Dispatch<SetStateAction<ChatRoomResponse | null>>;
+  setActiveRoomId: Dispatch<SetStateAction<number | null>>;
 }
 
 export default function ChatRoom({
   chatRooms,
-  setActiveRoom,
+  setActiveRoomId,
   authUser,
   activeRoom,
 }: ChatRoomProps) {
@@ -29,9 +29,9 @@ export default function ChatRoom({
   const stompClient = useStompClient();
 
   const callback = useCallback(
-    (room: ChatRoomResponse) => {
-      if (stompClient) {
-        setActiveRoom(room);
+    (room: ChatRoomResponse, otherUser: ConversationUserResponse) => {
+      if (stompClient && stompClient.connected) {
+        setActiveRoomId(room.id);
         // aici bagi active room la backend
         // router.push(pathName + "?roomId=" + room.id);
         stompClient.publish({
@@ -41,17 +41,28 @@ export default function ChatRoom({
             userEmail: authUser.email,
           }),
         });
+        stompClient.publish({
+          destination:
+            "/app/chatMessageNotification/deleteAllByReceiverEmailSenderEmail",
+          body: JSON.stringify({
+            receiverEmail: authUser.email,
+            senderEmail: otherUser.email,
+          }),
+        });
       }
     },
-    [stompClient, setActiveRoom, authUser.email],
+    [stompClient, setActiveRoomId, authUser.email],
   );
+
+  // console.log("active room", activeRoom);
+  console.log("chat rooms", chatRooms);
 
   const fakeRooms = Array.from(
     { length: 20 },
     (_, i) => chatRooms.map((room) => ({ ...room, id: room.id + i })).flat()[0],
   );
 
-  console.log("chat rooms", chatRooms);
+  // console.log("chat rooms", chatRooms);
   return (
     <ScrollArea className="w-full h-[calc(1000px-1rem-100px)]  space-y-4">
       <div className="w-full h-full space-y-4 pr-4 pb-6 ">
@@ -71,7 +82,10 @@ export default function ChatRoom({
 }
 
 interface ChatRoomItemProps extends BaseProps {
-  callback: (room: ChatRoomResponse) => void;
+  callback: (
+    room: ChatRoomResponse,
+    otherUser: ConversationUserResponse,
+  ) => void;
   room: ChatRoomResponse;
 }
 
@@ -88,7 +102,7 @@ const ChatRoomItem = memo(
           isActive && "bg-accent text-accent-foreground hover:scale-100",
         )}
         onClick={() => {
-          callback(room);
+          callback(room, otherUser);
         }}
       >
         <div className="flex items-center justify-between">

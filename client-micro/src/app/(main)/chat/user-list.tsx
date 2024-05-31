@@ -16,7 +16,7 @@ interface UserItemProps {
 }
 
 export default function UserList({ users, authUser }: UserListProps) {
-  console.log("users", users);
+  // console.log("users", users);
   return users.map((user) => (
     <UserItem key={user.email} user={user} authUser={authUser} />
   ));

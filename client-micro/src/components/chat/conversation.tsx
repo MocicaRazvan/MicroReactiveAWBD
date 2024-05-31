@@ -66,12 +66,12 @@ export default function Conversation({
 
   useSubscription(`/user/${sender.email}/queue/messages`, (message) => {
     const newMessage = JSON.parse(message.body);
-    console.log("newMessage", newMessage);
+    // console.log("newMessage", newMessage);
     setChatMessages((prev) => updateMessages(prev, newMessage));
   });
   useSubscription(`/user/${receiver.email}/queue/messages`, (message) => {
     const newMessage = JSON.parse(message.body);
-    console.log("newMessage", newMessage);
+    // console.log("newMessage", newMessage);
     setChatMessages((prev) => updateMessages(prev, newMessage));
   });
 
@@ -140,8 +140,8 @@ export default function Conversation({
       <div className="flex-1 ">
         <ChatMessageForm
           chatRoomId={chatRoomId}
-          senderEmail={sender.email}
-          receiverEmail={receiver.email}
+          sender={sender}
+          receiver={receiver}
         />
       </div>
     </div>
@@ -209,7 +209,11 @@ const ChatMessageItem = memo(
       </div>
     );
   },
-  (prev, next) => isDeepEqual(prev, next),
+  (prev, next) =>
+    isDeepEqual(prev, next) &&
+    isDeepEqual(prev.chatMessage, next.chatMessage) &&
+    isDeepEqual(prev.sender, next.sender) &&
+    isDeepEqual(prev.receiver, next.receiver),
 );
 
 ChatMessageItem.displayName = "ChatMessageItem";

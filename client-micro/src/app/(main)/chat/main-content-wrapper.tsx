@@ -21,6 +21,7 @@ export default function ChatMainContentWrapper({
   } = useFetchStream<ConversationUserResponse[]>({
     path: "/ws-http/getConnectedUsers",
     acceptHeader: "application/json",
+    useAbortController: false,
   });
 
   const {
@@ -30,6 +31,7 @@ export default function ChatMainContentWrapper({
   } = useFetchStream<ChatRoomResponse[]>({
     path: `/ws-http/chatRooms/${authUser.email}`,
     acceptHeader: "application/json",
+    useAbortController: false,
   });
 
   if (uError || rError) {
@@ -39,8 +41,8 @@ export default function ChatMainContentWrapper({
 
   if (!uIsFinished || !rIsFinished) return <LoadingSpinner />;
 
-  console.log("connectedUsers", connectedUsers);
-  console.log("chatRooms", chatRooms);
+  // console.log("connectedUsers", connectedUsers);
+  // console.log("chatRooms", chatRooms);
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <ChatMainContent

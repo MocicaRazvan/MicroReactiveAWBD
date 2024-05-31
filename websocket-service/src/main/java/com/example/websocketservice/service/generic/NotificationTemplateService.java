@@ -3,16 +3,25 @@ package com.example.websocketservice.service.generic;
 import com.example.websocketservice.dtos.generic.IdResponse;
 import com.example.websocketservice.dtos.generic.NotificationTemplateBody;
 import com.example.websocketservice.dtos.generic.NotificationTemplateResponse;
-import com.example.websocketservice.models.generic.IdGenerated;
-import com.example.websocketservice.models.generic.NotificationTemplate;
-import com.example.websocketservice.repositories.generic.IdGeneratedRepository;
-import com.example.websocketservice.repositories.generic.NotificationTemplateRepository;
+import com.example.websocketservice.dtos.notifications.ChatMessageNotificationResponse;
+import com.example.websocketservice.enums.ChatMessageNotificationType;
 
-public interface NotificationTemplateService<R extends IdGenerated, RRESP extends IdResponse, E extends Enum<E>,
-        MODEL extends NotificationTemplate<R, E>, BODY extends NotificationTemplateBody<E>, RESPONSE extends NotificationTemplateResponse<RRESP, E>> {
+import java.util.List;
+
+public interface NotificationTemplateService<RRESP extends IdResponse, E extends Enum<E>,
+        BODY extends NotificationTemplateBody<E>, RESPONSE extends NotificationTemplateResponse<RRESP, E>> {
 
     RESPONSE saveNotification(BODY body);
 
-    void deleteNotification(Long id);
+    void deleteById(Long id);
 
+    List<RESPONSE> getAllBySenderEmailAndType(String senderEmail, E type);
+
+    void deleteAllBySenderEmailAndType(String senderEmail, E type);
+
+    List<RESPONSE> getAllByReceiverEmailAndType(String senderEmail, E type);
+
+    void deleteAllByReceiverEmailAndType(String senderEmail, E type);
+
+    void deleteAllByReceiverEmailSenderEmailAndType(String senderEmail, String receiverEmail, E type);
 }

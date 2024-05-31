@@ -15,17 +15,21 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import Editor from "@/components/editor/editor";
-import { ActivationState, useStompClient } from "react-stomp-hooks";
+import { useStompClient } from "react-stomp-hooks";
+import {
+  ChatMessageNotificationBody,
+  ConversationUserResponse,
+} from "@/types/dto";
 
 interface ChatMessageFormProps {
   chatRoomId: number;
-  senderEmail: string;
-  receiverEmail: string;
+  sender: ConversationUserResponse;
+  receiver: ConversationUserResponse;
 }
 
 export default function ChatMessageForm({
-  senderEmail,
-  receiverEmail,
+  sender,
+  receiver,
   chatRoomId,
 }: ChatMessageFormProps) {
   const stompClient = useStompClient();
@@ -47,13 +51,33 @@ export default function ChatMessageForm({
           body: JSON.stringify({
             content,
             chatRoomId,
-            senderEmail,
-            receiverEmail,
+            senderEmail: sender.email,
+            receiverEmail: receiver.email,
           }),
         });
+        console.log("sending notification");
+        console.log("receiverchatId", receiver.connectedChatRoom?.id);
+        console.log("connectedChatRoom", chatRoomId);
+        if (
+          !receiver.connectedChatRoom?.id ||
+          receiver.connectedChatRoom.id !== chatRoomId
+        ) {
+          const body: ChatMessageNotificationBody = {
+            senderEmail: sender.email,
+            receiverEmail: receiver.email,
+            type: "NEW_MESSAGE",
+            referenceId: chatRoomId,
+            content: "New message from " + sender.email,
+            extraLink: "",
+          };
+          stompClient.publish({
+            destination: "/app/chatMessageNotification/sendNotification",
+            body: JSON.stringify(body),
+          });
+        }
       }
     },
-    [chatRoomId, form, receiverEmail, senderEmail, stompClient],
+    [chatRoomId, form, receiver, sender, stompClient],
   );
   return (
     <div className="py-2 border-t flex items-center px-5">

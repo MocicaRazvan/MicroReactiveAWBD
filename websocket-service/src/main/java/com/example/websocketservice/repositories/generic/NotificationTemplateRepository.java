@@ -19,4 +19,20 @@ public interface NotificationTemplateRepository<R extends IdGenerated, E extends
     List<M> findAllByReceiverId(Long receiverId);
 
     List<M> findAllBySenderIdAndReceiverId(Long senderId, Long receiverId);
+
+    List<M> findAllByReceiverIdAndType(Long receiverId, E type);
+
+    void deleteAllBySenderId(Long senderId);
+
+    void deleteAllBySenderIdAndType(Long senderId, E type);
+
+    void deleteAllByReceiverId(Long receiverId);
+
+    void deleteAllByReceiverIdAndType(Long receiverId, E type);
+
+    void deleteAllBySenderIdAndReceiverIdAndType(Long senderId, Long receiverId, E type);
+
+    void deleteAllBySenderIdAndReceiverId(Long senderId, Long receiverId);
+
+
 }

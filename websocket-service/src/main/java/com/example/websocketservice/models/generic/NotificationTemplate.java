@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @SuperBuilder
 @MappedSuperclass
-public class NotificationTemplate<R extends IdGenerated, E extends Enum<E>> extends IdGenerated implements Transformable<NotificationTemplate<R, E>> {
+public abstract class NotificationTemplate<R extends IdGenerated, E extends Enum<E>> extends IdGenerated implements Transformable<NotificationTemplate<R, E>> {
 //    @Id
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
 //    private Long id;
@@ -43,6 +43,7 @@ public class NotificationTemplate<R extends IdGenerated, E extends Enum<E>> exte
 
     @Column(nullable = false)
     private LocalDateTime timestamp;
+
 
     @PrePersist
     protected void prePersist() {

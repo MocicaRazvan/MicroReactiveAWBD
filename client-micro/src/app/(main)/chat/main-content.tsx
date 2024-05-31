@@ -38,9 +38,26 @@ export default function ChatMainContent({
     useState<ChatRoomResponse[]>(initialChatRooms);
 
   const [activeRoom, setActiveRoom] = useState<ChatRoomResponse | null>(null);
+  const [activeRoomId, setActiveRoomId] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (activeRoomId) {
+      setActiveRoom(chatRooms.find((room) => room.id === activeRoomId) || null);
+    } else {
+      setActiveRoom(null);
+    }
+  }, [activeRoomId, JSON.stringify(chatRooms)]);
+
+  useEffect(() => {
+    setChatRooms(initialChatRooms);
+  }, [initialChatRooms]);
+
+  useEffect(() => {
+    setConvUsers(initialConnectedUsers);
+  }, [initialConnectedUsers]);
 
   useSubscription("/chat/connected", (message) => {
-    console.log("conv user message", message);
+    // console.log("conv user message", message);
     const newMessage = JSON.parse(message.body);
 
     setConvUsers((prev) => {
@@ -54,15 +71,16 @@ export default function ChatMainContent({
   });
 
   useSubscription(`/user/${authUser.email}/chatRooms`, (message) => {
-    console.log("chat rooms", message);
+    // console.log("chat rooms", message);
     const newMessage = JSON.parse(message.body);
+    console.log("chat rooms", newMessage);
     setChatRooms((prev) => {
       const filteredRooms = prev.filter((room) => room.id !== newMessage.id);
       return [...filteredRooms, newMessage];
     });
   });
 
-  console.log("convUsers", convUsers);
+  // console.log("convUsers", convUsers);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -126,7 +144,7 @@ export default function ChatMainContent({
           <hr className="my-2" />
           <ChatRoom
             chatRooms={chatRooms}
-            setActiveRoom={setActiveRoom}
+            setActiveRoomId={setActiveRoomId}
             activeRoom={activeRoom}
             authUser={authUser}
           />
