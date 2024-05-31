@@ -17,7 +17,7 @@ public interface ChatRoomRepository extends IdGeneratedRepository<ChatRoom> {
                 join cr.users u
                 where u.email in :userEmail
                 group by cr.id
-                having count(u.id) = :count
+                having count(u.id) = :count and count(u.id) > 0
             """)
     List<ChatRoom> findByUsers(Set<String> userEmail, long count);
 

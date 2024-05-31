@@ -7,12 +7,11 @@ export default async function AuthLayout({
 }: {
   children: ReactNode;
 }) {
+  const spring = process.env.NEXT_PUBLIC_SPRING_CLIENT!;
   return (
     <div>
       <Nav />
-      <StompProvider url={"http://localhost:8080/ws/ws-service"}>
-        {children}
-      </StompProvider>
+      <StompProvider url={spring + "/ws/ws-service"}>{children}</StompProvider>
     </div>
   );
 }

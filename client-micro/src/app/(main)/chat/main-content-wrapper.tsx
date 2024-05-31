@@ -2,7 +2,7 @@
 
 import { ChatRoomResponse, ConversationUserResponse } from "@/types/dto";
 import { Session } from "next-auth";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import LoadingSpinner from "@/components/common/loading-spinner";
 import ChatMainContent from "@/app/(main)/chat/main-content";
 import useFetchStream from "@/hoooks/useFetchStream";
@@ -28,11 +28,24 @@ export default function ChatMainContentWrapper({
     messages: chatRooms,
     error: rError,
     isFinished: rIsFinished,
+    refetch: refetchChatRooms,
   } = useFetchStream<ChatRoomResponse[]>({
     path: `/ws-http/chatRooms/${authUser.email}`,
     acceptHeader: "application/json",
     useAbortController: false,
   });
+
+  // sometimes some rooms have no users, so we need to refetch
+  // todo nooooooo
+  useEffect(() => {
+    if (
+      chatRooms &&
+      chatRooms.length > 0 &&
+      chatRooms[0].find((room) => room.users.length === 0)
+    ) {
+      refetchChatRooms();
+    }
+  }, [refetchChatRooms, chatRooms]);
 
   if (uError || rError) {
     console.error("Error fetching messages:", uError || rError);
@@ -42,7 +55,7 @@ export default function ChatMainContentWrapper({
   if (!uIsFinished || !rIsFinished) return <LoadingSpinner />;
 
   // console.log("connectedUsers", connectedUsers);
-  // console.log("chatRooms", chatRooms);
+  console.log("chatRooms", chatRooms);
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <ChatMainContent

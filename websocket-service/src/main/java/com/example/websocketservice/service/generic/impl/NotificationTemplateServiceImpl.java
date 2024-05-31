@@ -44,6 +44,7 @@ public abstract class NotificationTemplateServiceImpl<R extends IdGenerated, RRE
     private final SimpMessagingTemplate messagingTemplate;
 
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public RESPONSE saveNotification(BODY body) {
         return fromBodyToModel(body)

@@ -14,6 +14,8 @@ import com.example.websocketservice.service.ConversationUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -59,12 +61,14 @@ public class ChatRoomServiceImpl implements ChatRoomService {
                 });
     }
 
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     @Override
     public List<ChatRoom> getRoomsByUsers(Set<String> emails) {
         return chatRoomRepository.findByUsers(emails
                 , emails.size());
     }
 
+    @Transactional
     @Override
     public List<ChatRoomResponse> getChatRooms(String email) {
         return chatRoomRepository.findChatRoomsByUserEmail(email)
