@@ -30,4 +30,8 @@ public class ConversationUser extends IdGenerated implements Transformable<Conve
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "connected_chat_room_id")
     private ChatRoom connectedChatRoom;
+
+    @Version
+    private Long version;
+
 }

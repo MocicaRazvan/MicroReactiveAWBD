@@ -13,8 +13,16 @@ import com.example.websocketservice.repositories.generic.IdGeneratedRepository;
 import com.example.websocketservice.repositories.generic.NotificationTemplateRepository;
 import com.example.websocketservice.service.ConversationUserService;
 import com.example.websocketservice.service.generic.NotificationTemplateService;
+import jakarta.persistence.OptimisticLockException;
+import jakarta.persistence.PessimisticLockException;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.exception.LockAcquisitionException;
+import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.orm.jpa.JpaSystemException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -142,7 +150,18 @@ public abstract class NotificationTemplateServiceImpl<R extends IdGenerated, RRE
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.REPEATABLE_READ)
+//    @Transactional
+    @Retryable(
+            retryFor = {OptimisticLockException.class,
+                    PessimisticLockException.class,
+                    CannotAcquireLockException.class,
+                    JpaSystemException.class,
+                    LockAcquisitionException.class,
+                    ObjectOptimisticLockingFailureException.class,
+                    CannotAcquireLockException.class},
+            maxAttempts = 5,
+            backoff = @Backoff(delay = 200, multiplier = 2, maxDelay = 1000))
     public void deleteAllByReceiverEmailSenderEmailAndType(String senderEmail, String receiverEmail, E type) {
         CompletableFuture<ConversationUser> senderFuture = conversationUserService.getUserByEmailAsync(senderEmail);
         CompletableFuture<ConversationUser> receiverFuture = conversationUserService.getUserByEmailAsync(receiverEmail);

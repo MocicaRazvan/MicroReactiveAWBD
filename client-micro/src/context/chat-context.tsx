@@ -27,6 +27,7 @@ export const ChatProvider: React.FC<{
   const [activeChatId, setActiveChatId] = useState<number | null>(null);
   const [oldPathname, setOldPathname] = useState<string>(pathname);
 
+  // disconnect user when leaving chat page
   useEffect(() => {
     console.log("USE CC: handleBeforeUnload called");
 

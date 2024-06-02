@@ -3,7 +3,9 @@ package com.example.websocketservice.repositories.generic;
 
 import com.example.websocketservice.models.generic.IdGenerated;
 import com.example.websocketservice.models.generic.NotificationTemplate;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import java.util.List;
@@ -30,8 +32,10 @@ public interface NotificationTemplateRepository<R extends IdGenerated, E extends
 
     void deleteAllByReceiverIdAndType(Long receiverId, E type);
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     void deleteAllBySenderIdAndReceiverIdAndType(Long senderId, Long receiverId, E type);
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     void deleteAllBySenderIdAndReceiverId(Long senderId, Long receiverId);
 
 

@@ -12,6 +12,7 @@ public interface ChatMessageRepository extends IdGeneratedRepository<ChatMessage
     @Query("""
                 select cm from ChatMessage cm
                 where cm.chatRoom.id = :chatRoomId
+                order by cm.timestamp asc
             """)
     List<ChatMessage> findAllByChatRoomId(Long chatRoomId);
 }

@@ -12,10 +12,19 @@ import com.example.websocketservice.models.ConversationUser;
 import com.example.websocketservice.repositories.ChatRoomRepository;
 import com.example.websocketservice.repositories.ConversationUserRepository;
 import com.example.websocketservice.service.ConversationUserService;
+import jakarta.persistence.OptimisticLockException;
+import jakarta.persistence.PessimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.LockAcquisitionException;
+import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.orm.jpa.JpaSystemException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
@@ -33,6 +42,15 @@ public class ConversationUserServiceImpl implements ConversationUserService {
     private final ChatRoomRepository chatRoomRepository;
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Retryable(
+            retryFor = {OptimisticLockException.class,
+                    PessimisticLockException.class,
+                    CannotAcquireLockException.class,
+                    JpaSystemException.class,
+                    LockAcquisitionException.class},
+            maxAttempts = 5,
+            backoff = @Backoff(delay = 200, multiplier = 2, maxDelay = 1000))
     public ConversationUserResponse addUser(ConversationUserPayload conversationUserPayload) {
         return conversationUserRepository.findByEmail(conversationUserPayload.getEmail())
                 .map(cur -> conversationUserMapper.copyFromPayload(conversationUserPayload, cur))
@@ -45,6 +63,15 @@ public class ConversationUserServiceImpl implements ConversationUserService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Retryable(
+            retryFor = {OptimisticLockException.class,
+                    PessimisticLockException.class,
+                    CannotAcquireLockException.class,
+                    JpaSystemException.class,
+                    LockAcquisitionException.class},
+            maxAttempts = 5,
+            backoff = @Backoff(delay = 200, multiplier = 2, maxDelay = 1000))
     public ConversationUserResponse changeUserConnectedStatus(ConnectedStatus connectedStatus, String email) {
         return conversationUserRepository.findByEmail(email)
                 .map(cur -> {
@@ -60,23 +87,59 @@ public class ConversationUserServiceImpl implements ConversationUserService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Retryable(
+            retryFor = {OptimisticLockException.class,
+                    PessimisticLockException.class,
+                    CannotAcquireLockException.class,
+                    JpaSystemException.class,
+                    LockAcquisitionException.class},
+            maxAttempts = 5,
+            backoff = @Backoff(delay = 200, multiplier = 2, maxDelay = 1000))
     public ConversationUser getUserByEmail(String email) {
         return conversationUserRepository.findByEmail(email)
                 .orElseThrow(() -> new ConversationUserNotFound(email));
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Retryable(
+            retryFor = {OptimisticLockException.class,
+                    PessimisticLockException.class,
+                    CannotAcquireLockException.class,
+                    JpaSystemException.class,
+                    LockAcquisitionException.class},
+            maxAttempts = 5,
+            backoff = @Backoff(delay = 200, multiplier = 2, maxDelay = 1000))
     public CompletableFuture<ConversationUser> getUserByEmailAsync(String email) {
         return getUserByEmail(email).
                 map(CompletableFuture::completedFuture);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Retryable(
+            retryFor = {OptimisticLockException.class,
+                    PessimisticLockException.class,
+                    CannotAcquireLockException.class,
+                    JpaSystemException.class,
+                    LockAcquisitionException.class},
+            maxAttempts = 5,
+            backoff = @Backoff(delay = 200, multiplier = 2, maxDelay = 1000))
     public ConversationUser saveUser(ConversationUser conversationUser) {
         return conversationUserRepository.save(conversationUser);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Retryable(
+            retryFor = {OptimisticLockException.class,
+                    PessimisticLockException.class,
+                    CannotAcquireLockException.class,
+                    JpaSystemException.class,
+                    LockAcquisitionException.class},
+            maxAttempts = 5,
+            backoff = @Backoff(delay = 200, multiplier = 2, maxDelay = 1000))
     public ConversationUser saveUserByEmailIfNotExist(String email) {
         return conversationUserRepository.findByEmail(email)
                 .orElseGet(() -> conversationUserRepository.save(ConversationUser.builder().email(email)
@@ -85,6 +148,15 @@ public class ConversationUserServiceImpl implements ConversationUserService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Retryable(
+            retryFor = {OptimisticLockException.class,
+                    PessimisticLockException.class,
+                    CannotAcquireLockException.class,
+                    JpaSystemException.class,
+                    LockAcquisitionException.class},
+            maxAttempts = 5,
+            backoff = @Backoff(delay = 200, multiplier = 2, maxDelay = 1000))
     public List<ConversationUserResponse> getConnectedUsers() {
         return conversationUserRepository.findAllByConnectedStatusIs(ConnectedStatus.ONLINE)
                 .stream()
@@ -93,6 +165,15 @@ public class ConversationUserServiceImpl implements ConversationUserService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Retryable(
+            retryFor = {OptimisticLockException.class,
+                    PessimisticLockException.class,
+                    CannotAcquireLockException.class,
+                    JpaSystemException.class,
+                    LockAcquisitionException.class},
+            maxAttempts = 5,
+            backoff = @Backoff(delay = 200, multiplier = 2, maxDelay = 1000))
     public ConversationUserResponse changeUserChatRoom(ChatRoomUserDto chatRoomUserDto) {
         return getUserByEmail(chatRoomUserDto.getUserEmail())
                 .map(u -> {
