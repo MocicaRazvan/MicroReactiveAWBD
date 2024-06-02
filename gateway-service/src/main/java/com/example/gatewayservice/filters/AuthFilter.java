@@ -67,12 +67,26 @@ public class AuthFilter implements GatewayFilter {
 
         log.info("AuthHeader: {}", authHeader);
 
-        if ((authHeader == null || !authHeader.startsWith("Bearer ")) && (authCookie == null || authCookie.isEmpty())) {
+        final String authQueryParam = exchange.getRequest().getQueryParams().getFirst("authToken");
+
+        log.info("AuthQueryParam: {}", authQueryParam);
+
+//        if ((authHeader == null || !authHeader.startsWith("Bearer ")) && (authCookie == null || authCookie.isEmpty())) {
+//            return handleError("Token not found", exchange);
+//        }
+
+        if ((authHeader == null || !authHeader.startsWith("Bearer ")) &&
+                (authCookie == null || authCookie.isEmpty()) &&
+                (authQueryParam == null || authQueryParam.isEmpty())) {
             return handleError("Token not found", exchange);
         }
 
-        final String token = authHeader != null ? authHeader.substring(7) : authCookie;
+//        final String token = authHeader != null ? authHeader.substring(7) : authCookie;
 
+        final String token = authHeader != null ? authHeader.substring(7) :
+                authCookie != null ? authCookie :
+                        authQueryParam;
+        
         TokenValidationRequest request = TokenValidationRequest.builder()
                 .token(token).minRoleRequired(role).build();
 

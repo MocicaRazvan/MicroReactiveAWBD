@@ -1,6 +1,6 @@
-package com.example.websocketservice.exceptions;
+package com.example.websocketservice.exceptions.notFound;
 
-public class EntityNotFound extends RuntimeException {
+public class EntityNotFound extends NotFoundBase {
 
     public EntityNotFound(String name, Long id) {
         super(name + " with id " + id + " not found");

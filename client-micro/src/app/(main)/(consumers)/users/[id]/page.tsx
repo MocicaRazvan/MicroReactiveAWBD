@@ -8,13 +8,14 @@ import { BaseError } from "@/types/responses";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { UpdateAccordion } from "./update-accordion";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AlertDialogMakeTrainer } from "./make-trainer-alert";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { fetchStream } from "@/hoooks/fetchStream";
 import { cn } from "@/lib/utils";
+import { useStompClient } from "react-stomp-hooks";
 
 export default function UserPage() {
   const [stateUser, setStateUser] = useState<UserDto>();
@@ -36,6 +37,9 @@ export default function UserPage() {
     isVisible: false,
   });
   const session = useSession();
+  const stompClient = useStompClient();
+  const router = useRouter();
+
   const authUser = session.data?.user;
   const user = messages[0]?.content;
 
@@ -83,6 +87,31 @@ export default function UserPage() {
     );
     setIsLoading(false);
   };
+
+  const handleStartChat = useCallback(() => {
+    if (stompClient && stompClient.connected && stateUser && authUser) {
+      // stompClient?.publish({
+      //   destination: "/app/addUser",
+      //   body: JSON.stringify({
+      //     email: stateUser.email,
+      //     connectedStatus: "OFFLINE",
+      //   }),
+      // });
+      stompClient?.publish({
+        destination: "/app/addChatRoom",
+        body: JSON.stringify({
+          users: [
+            { email: stateUser.email, connectedStatus: "OFFLINE" },
+            {
+              email: authUser.email,
+              connectedStatus: "ONLINE",
+            },
+          ],
+        }),
+      });
+      router.push(`/chat?email=${stateUser.email}`);
+    }
+  }, [authUser, router, stateUser, stompClient]);
 
   console.table(user);
 
@@ -143,6 +172,11 @@ export default function UserPage() {
             />
           )}
         </div>
+        {!isOwner && (
+          <div className={"mt-8 flex items-center justify-center"}>
+            <Button onClick={() => handleStartChat()}>Start Chat</Button>
+          </div>
+        )}
         {isOwner && (
           <UpdateAccordion
             user={user}

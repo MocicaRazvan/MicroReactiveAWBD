@@ -34,10 +34,8 @@ public interface ChatRoomRepository extends IdGeneratedRepository<ChatRoom> {
     List<ChatRoomUserDto> findOthersEmailsBySenderEmail(String senderEmail);
 
 
-    @Query("""
-            select cr from ChatRoom cr
-            join cr.users u
-            where u.email = :userEmail
-            """)
+    @Query("SELECT cr FROM ChatRoom cr JOIN cr.users u WHERE u.email = :userEmail")
     List<ChatRoom> findChatRoomsByUserEmail(String userEmail);
+
+    List<ChatRoom> findAllByUsersEmail(String email);
 }

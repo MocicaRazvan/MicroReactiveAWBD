@@ -44,6 +44,8 @@ public abstract class NotificationTemplate<R extends IdGenerated, E extends Enum
     @Column(nullable = false)
     private LocalDateTime timestamp;
 
+    @Version
+    private Long version;
 
     @PrePersist
     protected void prePersist() {

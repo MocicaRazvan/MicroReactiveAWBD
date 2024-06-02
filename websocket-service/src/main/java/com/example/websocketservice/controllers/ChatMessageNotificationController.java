@@ -8,12 +8,15 @@ import com.example.websocketservice.dtos.notifications.SenderEmailReceiverEmailD
 import com.example.websocketservice.dtos.notifications.SenderTypeDto;
 import com.example.websocketservice.enums.ChatMessageNotificationType;
 import com.example.websocketservice.service.ChatMessageNotificationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
@@ -40,10 +43,10 @@ public class ChatMessageNotificationController implements
         chatMessageNotificationService.deleteById(id);
     }
 
-    @GetMapping("/chatMessageNotification/getAllBySenderEmailAndType")
+    @PatchMapping("/chatMessageNotification/getAllBySenderEmailAndType")
     @Override
-    public List<ChatMessageNotificationResponse> getAllBySenderEmailAndType(@RequestBody SenderTypeDto<ChatMessageNotificationType> senderTypeDto) {
-        return chatMessageNotificationService.getAllBySenderEmailAndType(senderTypeDto.getSenderEmail(), senderTypeDto.getType());
+    public ResponseEntity<List<ChatMessageNotificationResponse>> getAllBySenderEmailAndType(@Valid @RequestBody SenderTypeDto<ChatMessageNotificationType> senderTypeDto) {
+        return ResponseEntity.ok(chatMessageNotificationService.getAllBySenderEmailAndType(senderTypeDto.getSenderEmail(), senderTypeDto.getType()));
     }
 
     @MessageMapping("/chatMessageNotification/deleteAllBySenderEmailAndType")
@@ -52,21 +55,21 @@ public class ChatMessageNotificationController implements
         chatMessageNotificationService.deleteAllBySenderEmailAndType(senderTypeDto.getSenderEmail(), senderTypeDto.getType());
     }
 
-    @GetMapping("/chatMessageNotification/getAllByReceiverEmailAndType")
+    @PatchMapping("/chatMessageNotification/getAllByReceiverEmailAndType")
     @Override
-    public List<ChatMessageNotificationResponse> getAllByReceiverEmailAndType(SenderTypeDto<ChatMessageNotificationType> senderTypeDto) {
-        return chatMessageNotificationService.getAllByReceiverEmailAndType(senderTypeDto.getSenderEmail(), senderTypeDto.getType());
+    public ResponseEntity<List<ChatMessageNotificationResponse>> getAllByReceiverEmailAndType(@Valid @RequestBody SenderTypeDto<ChatMessageNotificationType> senderTypeDto) {
+        return ResponseEntity.ok(chatMessageNotificationService.getAllByReceiverEmailAndType(senderTypeDto.getSenderEmail(), senderTypeDto.getType()));
     }
 
     @MessageMapping("/chatMessageNotification/deleteAllByReceiverEmailAndType")
     @Override
-    public void deleteAllByReceiverEmailAndType(SenderTypeDto<ChatMessageNotificationType> senderTypeDto) {
+    public void deleteAllByReceiverEmailAndType(@Payload SenderTypeDto<ChatMessageNotificationType> senderTypeDto) {
         chatMessageNotificationService.deleteAllByReceiverEmailAndType(senderTypeDto.getSenderEmail(), senderTypeDto.getType());
     }
 
     @MessageMapping("/chatMessageNotification/deleteAllByReceiverEmailSenderEmail")
     @Override
-    public void deleteAllByReceiverEmailSenderEmail(SenderEmailReceiverEmailDto senderEmailReceiverEmailDto) {
+    public void deleteAllByReceiverEmailSenderEmail(@Payload SenderEmailReceiverEmailDto senderEmailReceiverEmailDto) {
         chatMessageNotificationService.deleteAllByReceiverEmailSenderEmailAndType(senderEmailReceiverEmailDto.getSenderEmail(), senderEmailReceiverEmailDto.getReceiverEmail(), null);
     }
 

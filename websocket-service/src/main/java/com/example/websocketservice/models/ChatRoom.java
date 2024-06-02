@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -27,5 +28,14 @@ public class ChatRoom extends IdGenerated implements Transformable<ChatRoom> {
             joinColumns = @JoinColumn(name = "chat_room_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private Set<ConversationUser> users;
+    private List<ConversationUser> users;
+
+
+    @Override
+    public String toString() {
+        return "ChatRoom{" +
+                "users=" + users.stream().map(ConversationUser::getEmail).toList() +
+                ", id=" + super.getId() +
+                '}';
+    }
 }

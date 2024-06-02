@@ -16,8 +16,18 @@ public abstract class ChatRoomMapper implements ModelResponseMapper<ChatRoom, Ch
 
     @Autowired
     private ConversationUserService conversationUserService;
+    @Autowired
+    private ConversationUserMapper conversationUserMapper;
 
-    public abstract ChatRoomResponse fromModelToResponse(ChatRoom chatRoom);
+    public ChatRoomResponse fromModelToResponse(ChatRoom chatRoom) {
+        return ChatRoomResponse.builder()
+                .id(chatRoom.getId())
+                .users(chatRoom.getUsers()
+                        .stream()
+                        .map(u -> conversationUserMapper.fromModelToResponse(u))
+                        .collect(Collectors.toSet()))
+                .build();
+    }
 
     public abstract ChatRoom fromDtoToModel(ChatRoomResponse chatRoomResponse);
 
@@ -25,7 +35,7 @@ public abstract class ChatRoomMapper implements ModelResponseMapper<ChatRoom, Ch
         return ChatRoom.builder().users(chatRoomPayload.getUsers()
                 .stream().
                 map(u -> conversationUserService.getUserByEmail(u.getEmail()))
-                .collect(Collectors.toSet())).build();
+                .collect(Collectors.toList())).build();
 
     }
 }

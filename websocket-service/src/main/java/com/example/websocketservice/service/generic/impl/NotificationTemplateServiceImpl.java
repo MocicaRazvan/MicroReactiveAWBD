@@ -3,10 +3,8 @@ package com.example.websocketservice.service.generic.impl;
 import com.example.websocketservice.dtos.generic.IdResponse;
 import com.example.websocketservice.dtos.generic.NotificationTemplateBody;
 import com.example.websocketservice.dtos.generic.NotificationTemplateResponse;
-import com.example.websocketservice.dtos.notifications.ChatMessageNotificationResponse;
-import com.example.websocketservice.enums.ChatMessageNotificationType;
 import com.example.websocketservice.enums.NotificationNotifyType;
-import com.example.websocketservice.exceptions.EntityNotFound;
+import com.example.websocketservice.exceptions.notFound.EntityNotFound;
 import com.example.websocketservice.mappers.generic.NotificationTemplateMapper;
 import com.example.websocketservice.models.ConversationUser;
 import com.example.websocketservice.models.generic.IdGenerated;
@@ -17,6 +15,7 @@ import com.example.websocketservice.service.ConversationUserService;
 import com.example.websocketservice.service.generic.NotificationTemplateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -143,7 +142,7 @@ public abstract class NotificationTemplateServiceImpl<R extends IdGenerated, RRE
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
     public void deleteAllByReceiverEmailSenderEmailAndType(String senderEmail, String receiverEmail, E type) {
         CompletableFuture<ConversationUser> senderFuture = conversationUserService.getUserByEmailAsync(senderEmail);
         CompletableFuture<ConversationUser> receiverFuture = conversationUserService.getUserByEmailAsync(receiverEmail);

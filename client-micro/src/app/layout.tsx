@@ -9,6 +9,11 @@ import { CartContext, CartProvider } from "@/context/cart-context";
 import { Toaster } from "@/components/ui/toaster";
 import LennisProvder from "@/providers/lennis-provider";
 import Footer from "@/components/common/footer";
+import { StompProvider } from "@/providers/stomp-provider";
+import { ChatMessageNotificationProvider } from "@/context/chat-message-notification-context";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/auth-options";
+import { ChatProvider } from "@/context/chat-context";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -19,17 +24,21 @@ export const meta: Metadata = {
   title: "Wellness",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const spring = process.env.NEXT_PUBLIC_SPRING_CLIENT!;
+  const session = await getServerSession(authOptions);
+  const isUser = !!(session && session.user && true);
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased ",
-          fontSans.variable
+          fontSans.variable,
         )}
       >
         <ThemeProvider
@@ -43,7 +52,23 @@ export default function RootLayout({
               <LennisProvder>
                 <div className="max-w-[1700px] flex-col items-center justify-center w-full mx-auto">
                   {/* <Nav /> */}
-                  {children}
+                  {!isUser ? (
+                    children
+                  ) : (
+                    <StompProvider
+                      url={spring + "/ws/ws-service"}
+                      authUser={session.user!}
+                    >
+                      <ChatProvider authUser={session.user!}>
+                        <ChatMessageNotificationProvider
+                          authUser={session.user!}
+                        >
+                          {children}
+                        </ChatMessageNotificationProvider>
+                      </ChatProvider>
+                    </StompProvider>
+                  )}
+
                   <Footer />
                 </div>
                 <Toaster />

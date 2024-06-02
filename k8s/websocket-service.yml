@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: websocket-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: websocket-service
+  template:
+    metadata:
+      labels:
+        app: websocket-service
+    spec:
+      containers:
+        - name: websocket-service
+          image: razvanmocica/websocket-service:latest
+          ports:
+            - containerPort: 8089
+          #              hostPort: 8089
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: k8s
+      initContainers:
+        - name: wait-for-config-server
+          image: busybox
+          command: [ 'sh', '-c', 'until nc -z config-server 8888; do echo waiting for config-server; sleep 2; done;' ]
+        - name: wait-for-eureka
+          image: busybox
+          command: [ 'sh', '-c', 'until nc -z eureka 8761; do echo waiting for eureka; sleep 2; done;' ]
+        - name: wait-for-postgres-messages
+          image: busybox
+          command: [ 'sh', '-c', 'until nc -z postgres-messages 5432; do echo waiting for postgres-messages; sleep 2; done;' ]
+        - name: wait-for-zipkin
+          image: busybox
+          command: [ 'sh', '-c', 'until nc -z zipkin 9411; do echo waiting for zipkin; sleep 2; done;' ]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: websocket-service
+spec:
+  #  type: ClusterIP
+  type: LoadBalancer
+  ports:
+    - port: 8089
+      targetPort: 8089
+  selector:
+    app: websocket-service

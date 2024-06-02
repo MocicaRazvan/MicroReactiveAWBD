@@ -22,6 +22,8 @@ public interface ConversationUserService {
 
     ConversationUser saveUser(ConversationUser conversationUser);
 
+    ConversationUser saveUserByEmailIfNotExist(String email);
+
     List<ConversationUserResponse> getConnectedUsers();
 
     ConversationUserResponse changeUserChatRoom(ChatRoomUserDto chatRoomUserDto);

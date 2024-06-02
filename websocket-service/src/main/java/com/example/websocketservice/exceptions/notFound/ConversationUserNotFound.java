@@ -1,7 +1,7 @@
-package com.example.websocketservice.exceptions;
+package com.example.websocketservice.exceptions.notFound;
 
 
-public class ConversationUserNotFound extends RuntimeException {
+public class ConversationUserNotFound extends NotFoundBase {
     public String email;
 
     public ConversationUserNotFound(String email) {

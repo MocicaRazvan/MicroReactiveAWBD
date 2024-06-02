@@ -25,6 +25,7 @@ export default function ConversationWrapper({
     {
       path: "/ws-http/messages/" + chatRoomId,
       acceptHeader: "application/json",
+      authToken: true,
     },
   );
   if (error) {

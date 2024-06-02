@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-messages-pv
+  labels:
+    app: postgres-messages
+spec:
+  storageClassName: "standard"
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /mnt/data/postgres-messages
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-messages
+spec:
+  serviceName: "postgres-messages"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-messages
+  template:
+    metadata:
+      labels:
+        app: postgres-messages
+    spec:
+      containers:
+        - name: postgres-messages
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-common-config
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-common-config
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-common-config
+                  key: POSTGRES_PASSWORD
+          volumeMounts:
+            - name: postgres-messages-storage
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-messages-storage
+        labels:
+          app: postgres-messages
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 10Gi
+        selector:
+          matchLabels:
+            app: postgres-messages
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-messages
+spec:
+  selector:
+    app: postgres-messages
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432

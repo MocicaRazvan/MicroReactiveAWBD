@@ -17,6 +17,8 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 public class ChatRoomController {
+    // todo sort order users and conversation like proiect sem1
+
     private final ChatRoomService chatRoomService;
 
     @MessageMapping("/addChatRoom")

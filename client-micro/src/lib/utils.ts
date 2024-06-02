@@ -92,13 +92,22 @@ export function parseAndValidateNumbers(
   });
 }
 
-export const parseQueryParamAsInt = (
+export function parseQueryParamAsInt(
   paramValue: string | null,
   defaultValue: number,
-): number => {
+): number;
+export function parseQueryParamAsInt(
+  paramValue: string | null,
+  defaultValue: null,
+): number | null;
+
+export function parseQueryParamAsInt(
+  paramValue: string | null,
+  defaultValue: number | null,
+): number | null {
   const parsedValue = parseInt(paramValue || "", 10);
   return isNaN(parsedValue) ? defaultValue : parsedValue;
-};
+}
 
 export function getCSSVariableValue(variableName: string) {
   const style = getComputedStyle(document.documentElement);

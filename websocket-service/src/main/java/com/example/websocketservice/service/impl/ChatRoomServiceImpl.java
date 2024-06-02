@@ -12,6 +12,7 @@ import com.example.websocketservice.repositories.ChatRoomRepository;
 import com.example.websocketservice.service.ChatRoomService;
 import com.example.websocketservice.service.ConversationUserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ChatRoomServiceImpl implements ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
@@ -36,6 +38,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         Set<String> emails = chatRoomPayload.getUsers()
                 .stream().map(ConversationUserBase::getEmail)
                 .collect(Collectors.toSet());
+
+        emails.forEach(conversationUserService::saveUserByEmailIfNotExist);
 
         if (emails.size() == 1) {
             throw new SameUserChatRoom();
@@ -61,20 +65,29 @@ public class ChatRoomServiceImpl implements ChatRoomService {
                 });
     }
 
-    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
+    // todo scoate transactional
+//    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     @Override
     public List<ChatRoom> getRoomsByUsers(Set<String> emails) {
-        return chatRoomRepository.findByUsers(emails
+        var rooms = chatRoomRepository.findByUsers(emails
                 , emails.size());
+        log.error("Rooms: {}", rooms);
+        return rooms;
     }
 
-    @Transactional
+    // todo scoate transactional
+//    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     @Override
     public List<ChatRoomResponse> getChatRooms(String email) {
-        return chatRoomRepository.findChatRoomsByUserEmail(email)
+        log.error("Email: {}", email);
+        var initial = chatRoomRepository.findChatRoomsByUserEmail(email);
+        log.error("Initial: {}", initial.toString());
+        var rooms = initial
                 .stream()
                 .map(chatRoomMapper::fromModelToResponse)
                 .collect(Collectors.toList());
+        log.error("Rooms : {}", rooms.toString());
+        return rooms;
     }
 
 

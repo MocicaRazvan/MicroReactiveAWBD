@@ -12,6 +12,7 @@ import { useStompClient, useSubscription } from "react-stomp-hooks";
 import { compareAsc, format, parseISO } from "date-fns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ChatMessageForm from "@/components/forms/chat-message-form";
+import { useChatNotification } from "@/context/chat-message-notification-context";
 
 interface ConversationProps {
   sender: ConversationUserResponse;
@@ -27,12 +28,14 @@ export default function Conversation({
   chatRoomId,
 }: ConversationProps) {
   // console.log("initialMessages", initialMessages);
-  const stompClient = useStompClient();
   const [chatMessages, setChatMessages] =
     useState<ChatMessageResponse[]>(initialMessages);
   // console.log("chatm leng", chatMessages.length);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  const [message, setMessage] = useState("");
+  const areInTheSameChat =
+    sender.connectedChatRoom?.id &&
+    receiver.connectedChatRoom?.id &&
+    sender.connectedChatRoom?.id === receiver.connectedChatRoom?.id;
 
   const updateMessages = (
     messages: ChatMessageResponse[],
@@ -62,17 +65,26 @@ export default function Conversation({
 
   useEffect(() => {
     setChatMessages(initialMessages);
-  }, [initialMessages]);
+  }, [JSON.stringify(initialMessages)]);
 
   useSubscription(`/user/${sender.email}/queue/messages`, (message) => {
     const newMessage = JSON.parse(message.body);
-    // console.log("newMessage", newMessage);
+    console.log("sender queue");
     setChatMessages((prev) => updateMessages(prev, newMessage));
   });
   useSubscription(`/user/${receiver.email}/queue/messages`, (message) => {
-    const newMessage = JSON.parse(message.body);
-    // console.log("newMessage", newMessage);
-    setChatMessages((prev) => updateMessages(prev, newMessage));
+    const newMessage = JSON.parse(message.body) as ChatMessageResponse;
+    console.log("receiver queue");
+    console.log("rec email", receiver.email);
+    console.log("sender email", sender.email);
+    console.log("newmsg rec", newMessage.receiver.email);
+    console.log("newmsg send", newMessage.sender.email);
+    if (
+      newMessage.receiver.email === receiver.email &&
+      newMessage.sender.email === sender.email
+    ) {
+      setChatMessages((prev) => updateMessages(prev, newMessage));
+    }
   });
 
   useEffect(() => {
@@ -80,11 +92,21 @@ export default function Conversation({
       chatContainerRef.current.scrollTop =
         chatContainerRef.current.scrollHeight;
     }
-  }, [chatMessages]);
+  }, [JSON.stringify(chatMessages)]);
 
   return (
     <div className="w-full h-full p-2 ">
-      <ScrollArea className="w-full h-[600px] " viewportRef={chatContainerRef}>
+      <ScrollArea
+        className="w-full h-[600px] relative"
+        viewportRef={chatContainerRef}
+      >
+        {areInTheSameChat && (
+          <div className=" absolute top-0 right-0 bg-opacity-60 z-[1] w-full border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <p className="text-center text-sm font-bold">
+              User is currently in this chat
+            </p>
+          </div>
+        )}
         <div className="flex flex-col h-full ">
           <div className="flex-1 grid w-full p-6 gap-6 flex-col ">
             <div className="grid gap-2">

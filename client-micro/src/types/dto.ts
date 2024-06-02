@@ -227,7 +227,7 @@ export interface NotificationTemplateBody<E extends string> {
   type?: E;
   referenceId: number;
   content: string;
-  extraLink: string;
+  extraLink?: string;
 }
 
 export type ChatMessageNotificationType = "NEW_MESSAGE";
@@ -242,7 +242,7 @@ export interface NotificationTemplateResponse<R extends IdDto, E extends string>
   type: E;
   reference: R;
   content: string;
-  extraLink: string;
+  extraLink?: string;
   timestamp: string;
 }
 

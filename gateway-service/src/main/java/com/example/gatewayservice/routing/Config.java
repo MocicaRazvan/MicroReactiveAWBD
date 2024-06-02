@@ -84,12 +84,15 @@ public class Config {
                         .uri("lb://invoice-service"))
                 .route("websocket-service-ws", r -> r.path("/ws/**")
                         .filters(f -> f.stripPrefix(1)
+                                .filter(authFilter)
                                 .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE")
                                 .dedupeResponseHeader("Access-Control-Allow-Credentials", "RETAIN_UNIQUE")
                         )
                         .uri("lb://websocket-service"))
                 .route("websocket-service-http", r -> r.path("/ws-http/**")
-                        .filters(f -> f.stripPrefix(1))
+                        .filters(f -> f.stripPrefix(1)
+                                .filter(authFilter)
+                        )
                         .uri("lb://websocket-service"))
 
 

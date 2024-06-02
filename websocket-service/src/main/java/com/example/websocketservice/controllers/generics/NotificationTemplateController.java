@@ -6,6 +6,7 @@ import com.example.websocketservice.dtos.generic.NotificationTemplateBody;
 import com.example.websocketservice.dtos.generic.NotificationTemplateResponse;
 import com.example.websocketservice.dtos.notifications.SenderEmailReceiverEmailDto;
 import com.example.websocketservice.dtos.notifications.SenderTypeDto;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -17,11 +18,11 @@ public interface NotificationTemplateController<RRESP extends IdResponse, E exte
 
     void deleteById(Long id);
 
-    List<RESPONSE> getAllBySenderEmailAndType(SenderTypeDto<E> senderTypeDto);
+    ResponseEntity<List<RESPONSE>> getAllBySenderEmailAndType(SenderTypeDto<E> senderTypeDto);
 
     void deleteAllBySenderEmailAndType(SenderTypeDto<E> senderTypeDto);
 
-    List<RESPONSE> getAllByReceiverEmailAndType(SenderTypeDto<E> senderTypeDto);
+    ResponseEntity<List<RESPONSE>> getAllByReceiverEmailAndType(SenderTypeDto<E> senderTypeDto);
 
     void deleteAllByReceiverEmailAndType(SenderTypeDto<E> senderTypeDto);
 

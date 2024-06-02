@@ -1,20 +1,18 @@
-package com.example.websocketservice.exceptions;
-
-import com.example.websocketservice.dtos.user.ConversationUserBase;
+package com.example.websocketservice.exceptions.notFound;
 
 import java.util.Set;
 
-public class NoChatRoom extends RuntimeException {
+public class NoChatRoomFound extends NotFoundBase {
     public Set<String> users;
     public Long id;
 
 
-    public NoChatRoom(Set<String> users) {
+    public NoChatRoomFound(Set<String> users) {
         super("No chat room found for users: " + users);
         this.users = users;
     }
 
-    public NoChatRoom(Long id) {
+    public NoChatRoomFound(Long id) {
         super("No chat room found for id: " + id);
         this.id = id;
     }

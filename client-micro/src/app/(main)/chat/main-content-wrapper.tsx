@@ -22,6 +22,7 @@ export default function ChatMainContentWrapper({
     path: "/ws-http/getConnectedUsers",
     acceptHeader: "application/json",
     useAbortController: false,
+    authToken: true,
   });
 
   const {
@@ -33,19 +34,8 @@ export default function ChatMainContentWrapper({
     path: `/ws-http/chatRooms/${authUser.email}`,
     acceptHeader: "application/json",
     useAbortController: false,
+    authToken: true,
   });
-
-  // sometimes some rooms have no users, so we need to refetch
-  // todo nooooooo
-  useEffect(() => {
-    if (
-      chatRooms &&
-      chatRooms.length > 0 &&
-      chatRooms[0].find((room) => room.users.length === 0)
-    ) {
-      refetchChatRooms();
-    }
-  }, [refetchChatRooms, chatRooms]);
 
   if (uError || rError) {
     console.error("Error fetching messages:", uError || rError);

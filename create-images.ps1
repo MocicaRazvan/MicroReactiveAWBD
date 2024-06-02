@@ -9,6 +9,7 @@ $services = @(
     @{ name = "comment-service"; context = "."; dockerfile = "comment-service/Dockerfile" },
     @{ name = "exercise-service"; context = "."; dockerfile = "exercise-service/Dockerfile" },
     @{ name = "invoices-service"; context = "./invoices-service"; dockerfile = "Dockerfile" },
+    @{ name = "websocket-service"; context = "./websocket-service"; dockerfile = "Dockerfile" },
     @{ name = "order-service"; context = "."; dockerfile = "order-service/Dockerfile" },
     @{ name = "post-service"; context = "."; dockerfile = "post-service/Dockerfile" },
     @{ name = "training-service"; context = "."; dockerfile = "training-service/Dockerfile" },

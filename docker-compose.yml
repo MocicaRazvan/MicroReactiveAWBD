@@ -201,6 +201,26 @@ services:
       - zipkin
       - rabbitmq
       - postgres-invoices
+    # websocket service
+  websocket-service:
+    container_name: websocket-container-awbd
+    build:
+      context: websocket-service
+      dockerfile: Dockerfile
+    ports:
+      - "8089:8089"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    #      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+    networks:
+      - awbd
+    restart: unless-stopped
+    depends_on:
+      - eureka
+      - config-server
+      - zipkin
+      - rabbitmq
+      - postgres-messages
   # order service
   order-service:
     container_name: order-container-awbd

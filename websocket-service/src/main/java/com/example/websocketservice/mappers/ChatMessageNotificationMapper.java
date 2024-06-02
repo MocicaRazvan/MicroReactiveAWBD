@@ -23,6 +23,7 @@ public class ChatMessageNotificationMapper
     @Override
     public ChatMessageNotificationResponse fromModelToResponse(ChatMessageNotification chatMessageNotification) {
         return ChatMessageNotificationResponse.builder()
+                .id(chatMessageNotification.getId())
                 .sender(conversationUserMapper.fromModelToResponse(chatMessageNotification.getSender()))
                 .receiver(conversationUserMapper.fromModelToResponse(chatMessageNotification.getReceiver()))
                 .type(chatMessageNotification.getType())

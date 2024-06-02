@@ -7,6 +7,7 @@ import com.example.websocketservice.dtos.user.ConversationUserResponse;
 import com.example.websocketservice.enums.ConnectedStatus;
 import com.example.websocketservice.service.ConversationUserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -19,8 +20,9 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class ConversationUserController {
-
+    // todo sort order users and conversation like proiect sem1
     private final ConversationUserService conversationUserService;
     private final SimpMessagingTemplate simpMessagingTemplate;
 
@@ -48,6 +50,7 @@ public class ConversationUserController {
 
     @MessageMapping("/disconnectUser/{email}")
     public void disconnectUser(@DestinationVariable String email) {
+        log.error("Disconnect user: {}", email);
         conversationUserService.changeUserConnectedStatus(ConnectedStatus.OFFLINE, email)
                 .map(cur -> {
                     simpMessagingTemplate.convertAndSend("/chat/connected",
@@ -63,6 +66,7 @@ public class ConversationUserController {
 
     @MessageMapping("/changeRoom")
     public void changeRoom(@Payload ChatRoomUserDto chatRoomUserDto) {
+        log.error("Change room: {}", chatRoomUserDto);
         conversationUserService.changeUserChatRoom(chatRoomUserDto)
                 .map(cur -> {
                     simpMessagingTemplate.convertAndSend("/chat/connected",
@@ -71,6 +75,5 @@ public class ConversationUserController {
                 });
     }
 
-    //todo connect to chat room si disconnect from chat room
 
 }

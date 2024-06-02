@@ -2,18 +2,18 @@ package com.example.websocketservice.service.impl;
 
 import com.example.websocketservice.dtos.chatRoom.ChatRoomResponse;
 import com.example.websocketservice.dtos.chatRoom.ChatRoomUserDto;
-import com.example.websocketservice.dtos.user.ConnectUserPayload;
 import com.example.websocketservice.dtos.user.ConversationUserPayload;
 import com.example.websocketservice.dtos.user.ConversationUserResponse;
 import com.example.websocketservice.enums.ConnectedStatus;
-import com.example.websocketservice.exceptions.ConversationUserNotFound;
-import com.example.websocketservice.exceptions.NoChatRoom;
+import com.example.websocketservice.exceptions.notFound.ConversationUserNotFound;
+import com.example.websocketservice.exceptions.notFound.NoChatRoomFound;
 import com.example.websocketservice.mappers.ConversationUserMapper;
 import com.example.websocketservice.models.ConversationUser;
 import com.example.websocketservice.repositories.ChatRoomRepository;
 import com.example.websocketservice.repositories.ConversationUserRepository;
 import com.example.websocketservice.service.ConversationUserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ConversationUserServiceImpl implements ConversationUserService {
     private final ConversationUserMapper conversationUserMapper;
     private final ConversationUserRepository conversationUserRepository;
@@ -48,6 +49,9 @@ public class ConversationUserServiceImpl implements ConversationUserService {
         return conversationUserRepository.findByEmail(email)
                 .map(cur -> {
                     cur.setConnectedStatus(connectedStatus);
+//                    cur.setConnectedChatRoom(null);
+                    if (connectedStatus == ConnectedStatus.OFFLINE)
+                        cur.setConnectedChatRoom(null);
                     return cur;
                 }).map(conversationUserRepository::save)
                 .map(this::mapToResponseAndNotify)
@@ -73,6 +77,14 @@ public class ConversationUserServiceImpl implements ConversationUserService {
     }
 
     @Override
+    public ConversationUser saveUserByEmailIfNotExist(String email) {
+        return conversationUserRepository.findByEmail(email)
+                .orElseGet(() -> conversationUserRepository.save(ConversationUser.builder().email(email)
+                        .connectedStatus(ConnectedStatus.OFFLINE)
+                        .build()));
+    }
+
+    @Override
     public List<ConversationUserResponse> getConnectedUsers() {
         return conversationUserRepository.findAllByConnectedStatusIs(ConnectedStatus.ONLINE)
                 .stream()
@@ -89,9 +101,10 @@ public class ConversationUserServiceImpl implements ConversationUserService {
                         return u;
                     } else {
                         return chatRoomRepository.findById(chatRoomUserDto.getChatId())
-                                .orElseThrow(() -> new NoChatRoom(chatRoomUserDto.getChatId()))
+                                .orElseThrow(() -> new NoChatRoomFound(chatRoomUserDto.getChatId()))
                                 .map(c -> {
                                     u.setConnectedChatRoom(c);
+                                    u.setConnectedStatus(ConnectedStatus.ONLINE);
                                     return u;
                                 });
                     }
@@ -101,6 +114,19 @@ public class ConversationUserServiceImpl implements ConversationUserService {
 
     private ConversationUserResponse mapToResponseAndNotify(ConversationUser conversationUser) {
         notifyOtherUsers(conversationUser.getEmail());
+        log.error("Conversation user chat room: {}", conversationUser.getConnectedChatRoom());
+        messagingTemplate.convertAndSendToUser(conversationUser.getEmail(), "/chat/changed",
+                ConversationUserResponse.builder()
+                        .id(conversationUser.getId())
+                        .connectedChatRoom(conversationUser.getConnectedChatRoom() == null ? null :
+                                ChatRoomResponse.builder()
+                                        .id(conversationUser.getConnectedChatRoom().getId())
+                                        .users(conversationUser.getConnectedChatRoom().getUsers()
+                                                .stream()
+                                                .map(conversationUserMapper::fromModelToResponse)
+                                                .collect(Collectors.toSet()))
+                                        .build())
+                        .build());
         return conversationUserMapper.fromModelToResponse(conversationUser);
     }
 
