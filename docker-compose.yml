@@ -36,13 +36,14 @@ services:
       POSTGRES_DB: wellness
       POSTGRES_USER: myuser
       POSTGRES_PASSWORD: mypassword
+      POSTGRES_LOG_STATEMENT: all
+      POSTGRES_LOG_DURATION: 'on'
     ports:
       - "5546:5432"
     volumes:
       - postgres_data_messages:/var/lib/postgresql/data
     networks:
       - awbd
-    restart: unless-stopped
 
   # utilites
   zipkin:
@@ -211,7 +212,17 @@ services:
       - "8089:8089"
     environment:
       SPRING_PROFILES_ACTIVE: docker
-    #      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+      #      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+      SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: 20
+      SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE: 5
+      SPRING_DATASOURCE_HIKARI_IDLE_TIMEOUT: 30000
+      SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: 20000
+      SPRING_DATASOURCE_HIKARI_MAX_LIFETIME: 120000
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: DEBUG
+      LOGGING_LEVEL_ORG_HIBERNATE_SQL: DEBUG
+      LOGGING_LEVEL_ORG_HIBERNATE_TYPE_DESCRIPTOR_SQL: TRACE
+      SPRING_JPA_SHOW_SQL: true
+      SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: true
     networks:
       - awbd
     restart: unless-stopped

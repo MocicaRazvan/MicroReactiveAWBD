@@ -11,12 +11,19 @@ import com.example.websocketservice.repositories.ChatMessageRepository;
 import com.example.websocketservice.service.ChatMessageService;
 import com.example.websocketservice.service.ChatRoomService;
 import com.example.websocketservice.service.ConversationUserService;
+import jakarta.persistence.OptimisticLockException;
+import jakarta.persistence.PessimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -32,6 +39,12 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     private final ConversationUserService conversationUserService;
 
     @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Retryable(
+            retryFor = {OptimisticLockException.class, PessimisticLockException.class},
+            maxAttempts = 5,
+            backoff = @Backoff(delay = 200, multiplier = 2)
+    )
     public ChatMessageResponse sendMessage(ChatMessagePayload chatMessagePayload) {
         Set<String> emails = Set.of(chatMessagePayload.getSenderEmail(), chatMessagePayload.getReceiverEmail());
         List<ChatRoom> rooms = chatRoomService.getRoomsByUsers(
@@ -76,7 +89,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
                     if (c.getReceiver().getConnectedChatRoom() != null &&
                             c.getReceiver().getConnectedChatRoom().getId().equals(
-                                    c.getSender().getConnectedChatRoom().getId())) {
+                                    Objects.requireNonNull(c.getSender().getConnectedChatRoom()).getId())) {
                         log.error("Sending to receiver " + c.getReceiver().getEmail());
                         messagingTemplate.convertAndSendToUser(chatMessagePayload.getReceiverEmail(), "/queue/messages", cmr);
                     } else {

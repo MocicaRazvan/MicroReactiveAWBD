@@ -132,6 +132,9 @@ export default function TrainingPage() {
   );
   const user = messages[0]?.user;
 
+  console.log("isOwner", isOwner);
+  console.log("msg user", messages[0]);
+
   if (!trainingState || !user) return null;
   return (
     <section className="w-full  min-h-[calc(100vh-4rem)] flex-col items-center justify-center transition-all px-6 py-10 relative pb-14">

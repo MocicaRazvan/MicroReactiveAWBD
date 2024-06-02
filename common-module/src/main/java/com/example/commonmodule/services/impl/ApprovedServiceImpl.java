@@ -163,8 +163,14 @@ public abstract class ApprovedServiceImpl<MODEL extends Approve, BODY extends Ti
     public Mono<Tuple2<RESPONSE, UserDto>> getModelByIdWithOwner(Long id, String userId) {
         return userUtils.getUser("", userId)
                 .flatMap(authUser -> getModel(id)
-                        .flatMap(model -> getResponseGuard(authUser, model, !model.isApproved()))
-                        .map(response -> Tuples.of(response, authUser))
+                        .flatMap(model -> getResponseGuard(authUser, model, !model.isApproved())
+                                .flatMap(response -> userUtils.getUser("", model.getUserId().toString())
+                                        .map(user -> Tuples.of(response, user))
+                                )
+                        )
+
                 );
+
+
     }
 }

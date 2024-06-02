@@ -379,7 +379,10 @@ export default function ChatMainContent({
         <div className="flex-1 md:flex-1 h-full border-2 p-4 rounded-md py-6  ">
           <h1
             className="font-bold text-xl tracking-tighter text-center h-[40px] cursor-pointer"
-            onClick={() => setActiveRoom(null)}
+            onClick={() => {
+              setActiveRoom(null);
+              window.history.pushState(null, "", `?`);
+            }}
           >
             Chat rooms
           </h1>

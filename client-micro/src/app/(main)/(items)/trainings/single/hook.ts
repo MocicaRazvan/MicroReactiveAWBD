@@ -51,6 +51,8 @@ export function useGetTraining({
     authToken: true,
   });
 
+  console.log("training msgs", messages[0]);
+
   useEffect(() => {
     if (exercisesMessages.length > 0) {
       setExercisesResponse(exercisesMessages.map((e) => e.content.content));
