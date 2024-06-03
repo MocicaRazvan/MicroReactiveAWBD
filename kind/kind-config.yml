@@ -13,7 +13,7 @@ nodes:
       - hostPath: "/c/Master/An 1/Sem2/AWBD/Proiect/k8s_data/postgres"
         containerPath: /mnt/data/postgres
       - hostPath: "/c/Master/An 1/Sem2/AWBD/Proiect/k8s_data/postgres-invoices"
-        containerPath: /mnt/data/postgres-messages
+        containerPath: /mnt/data/postgres-invoices
       - hostPath: "/c/Master/An 1/Sem2/AWBD/Proiect/k8s_data/postgres-messages"
         containerPath: /mnt/data/postgres-messages
     extraPortMappings:
