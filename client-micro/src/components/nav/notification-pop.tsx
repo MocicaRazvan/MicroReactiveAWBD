@@ -102,7 +102,7 @@ export default function NotificationPop({ authUser }: NotificationPopProps) {
         </div>
       </DropdownMenuTrigger>
       {totalNotifications > 0 && (
-        <DropdownMenuContent className={"w-52"}>
+        <DropdownMenuContent className={"w-64"}>
           <DropdownMenuGroup>
             <ScrollArea
               className={cn(
