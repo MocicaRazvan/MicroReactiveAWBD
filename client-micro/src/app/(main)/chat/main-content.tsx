@@ -32,17 +32,13 @@ export default function ChatMainContent({
   authUser,
 }: ChatMainContentProps) {
   const stompClient = useStompClient();
-  // const router = useRouter();
-  // const pathName = usePathname();
+
   const searchParams = useSearchParams();
   const chatId = searchParams.get("chatId");
   console.log("chatId", chatId);
   const email = searchParams.get("email");
 
   const { getNotificationState, removeBySender } = useChatNotification();
-
-  // const notificationState = getNotificationState();
-  // console.log("notification state", notificationState);
 
   // const [convUsers, setConvUsers] = useState<ConversationUserResponse[]>(
   //   initialConnectedUsers,
@@ -97,48 +93,6 @@ export default function ChatMainContent({
     window.history.pushState(null, "", `?${params.toString()}`);
   }, [activeRoomId, searchParams]);
 
-  // useEffect(() => {
-  //   if (activeChatId) {
-  //     setActiveRoom(chatRooms.find((room) => room.id === activeChatId) || null);
-  //   } else {
-  //     setActiveRoom(null);
-  //   }
-  // }, [activeChatId, JSON.stringify(chatRooms)]);
-
-  // useEffect(() => {
-  //   if (email && email !== authUser.email) {
-  //     const existingRoom = chatRooms.find((room) =>
-  //       room.users.some((user) => user.email === email),
-  //     );
-  //     if (existingRoom) {
-  //       setActiveRoomId(existingRoom.id);
-  //       router.replace(`${pathName}?chatId=${existingRoom.id}`);
-  //     }
-  //   }
-  // }, [authUser.email, chatId, JSON.stringify(chatRooms), email, pathName]);
-
-  // useEffect(() => {
-  //   setChatRooms(initialChatRooms);
-  // }, [initialChatRooms]);
-  //
-  // useEffect(() => {
-  //   setConvUsers(initialConnectedUsers);
-  // }, [initialConnectedUsers]);
-
-  // useSubscription("/chat/connected", (message) => {
-  //   // console.log("conv user message", message);
-  //   const newMessage = JSON.parse(message.body);
-  //
-  //   setConvUsers((prev) => {
-  //     const filteredUsers = prev.filter(
-  //       (user) => user.email !== newMessage.email,
-  //     );
-  //     return newMessage.connectedStatus === "ONLINE"
-  //       ? [...filteredUsers, newMessage]
-  //       : filteredUsers;
-  //   });
-  // });
-
   useSubscription(`/user/${authUser.email}/chatRooms`, (message) => {
     // console.log("chat rooms", message);
     const newMessage = JSON.parse(message.body);
@@ -153,20 +107,6 @@ export default function ChatMainContent({
 
   useEffect(() => {
     console.log("USE: useEffect triggered");
-
-    const handleBeforeUnload = () => {
-      console.log("USE: handleBeforeUnload called");
-      if (stompClient?.connected) {
-        console.log("USE: Disconnecting user:", authUser.email);
-        stompClient.publish({
-          destination: `/app/disconnectUser/${authUser.email}`,
-          body: JSON.stringify({
-            email: authUser.email,
-          }),
-        });
-      }
-    };
-
     ////
 
     if (initialChatId !== null && stompClient?.connected) {
@@ -198,12 +138,8 @@ export default function ChatMainContent({
       setClientInitialized(true);
     }
 
-    // window.addEventListener("beforeunload", handleBeforeUnload);
-
     return () => {
       console.log("USE: Cleanup called");
-      // window.removeEventListener("beforeunload", handleBeforeUnload);
-      // handleBeforeUnload();
     };
   }, [
     authUser.email,
@@ -213,91 +149,7 @@ export default function ChatMainContent({
     JSON.stringify(initialChatRooms),
   ]);
 
-  // // saftey measure
-  // useEffect(() => {
-  //   ////
-  //
-  //   if (initialChatId !== null && stompClient?.connected && clientInitialized) {
-  //     const validId = initialChatRooms.find(
-  //       (room) => room.id === initialChatId,
-  //     );
-  //     console.log("USE _: initialChatId", initialChatId);
-  //     console.log("USE _: validId", validId);
-  //     if (validId) {
-  //       stompClient.publish({
-  //         destination: "/app/changeRoom",
-  //         body: JSON.stringify({
-  //           chatId: initialChatId,
-  //           userEmail: authUser.email,
-  //         }),
-  //       });
-  //     }
-  //   }
-  //   ///
-  // }, [
-  //   authUser.email,
-  //   initialChatId,
-  //   stompClient?.connected,
-  //   clientInitialized,
-  // ]);
-
   console.log("USE:activeId", activeRoomId);
-
-  // useEffect(() => {
-  //   const handleBeforeUnload = () => {
-  //     if (stompClient && authUser && stompClient.connected) {
-  //       stompClient.publish({
-  //         destination: `/app/disconnectUser/${authUser.email}`,
-  //         body: JSON.stringify({
-  //           email: authUser.email,
-  //         }),
-  //       });
-  //       // redundant
-  //       // stompClient.publish({
-  //       //   destination: "/app/changeRoom",
-  //       //   body: JSON.stringify({
-  //       //     chatId: null,
-  //       //     userEmail: authUser.email,
-  //       //   }),
-  //       // });
-  //       // console.log("handleBeforeUnload");
-  //       // setActiveChatId(null);
-  //     }
-  //   };
-  //
-  //   if (stompClient && authUser) {
-  //     // const body: ConversationUserPayload = {
-  //     //   email: authUser.email,
-  //     //   connectedStatus: "ONLINE",
-  //     //   connectedChatRoomId: activeChatId ? activeChatId : undefined,
-  //     // };
-  //     stompClient.publish({
-  //       destination: `/app/connectUser/${authUser.email}`,
-  //       // body: JSON.stringify(body),
-  //     });
-  //     //
-  //     // if (!activeChatId) {
-  //     //   stompClient.publish({
-  //     //     destination: "/app/changeRoom",
-  //     //     body: JSON.stringify({
-  //     //       chatId: null,
-  //     //       // parseQueryParamAsInt(chatId, null),
-  //     //       userEmail: authUser.email,
-  //     //     }),
-  //     //   });
-  //     // }
-  //   }
-  //
-  //   // sometimes on back button cleanup is not called
-  //   window.addEventListener("beforeunload", handleBeforeUnload);
-  //
-  //   return () => {
-  //     window.removeEventListener("beforeunload", handleBeforeUnload);
-  //     handleBeforeUnload();
-  //   };
-  // }, [JSON.stringify(authUser), stompClient]);
-
-  // console.log("activeChatId", activeChatId);
 
   useEffect(() => {
     console.log("USE2: useEffect triggered " + chatId);
@@ -336,25 +188,6 @@ export default function ChatMainContent({
               receiverEmail: authUser.email,
             });
           }
-          //
-          //     const otherUser = room.users.find(
-          //       (user) => user.email !== authUser.email,
-          //     );
-          //     if (otherUser) {
-          //       stompClient.publish({
-          //         destination:
-          //           "/app/chatMessageNotification/deleteAllByReceiverEmailSenderEmail",
-          //         body: JSON.stringify({
-          //           receiverEmail: authUser.email,
-          //           senderEmail: otherUser.email,
-          //         }),
-          //       });
-          //       removeBySender({
-          //         stompClient,
-          //         senderEmail: otherUser.email,
-          //         receiverEmail: authUser.email,
-          //       });
-          //     }
         }
       }
     }

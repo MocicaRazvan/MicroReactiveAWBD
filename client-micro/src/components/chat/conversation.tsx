@@ -122,41 +122,6 @@ export default function Conversation({
                 ))}
             </div>
           </div>
-          {/*<div className="flex-1">*/}
-          {/*  <ChatMessageForm*/}
-          {/*    chatRoomId={chatRoomId}*/}
-          {/*    senderEmail={sender.email}*/}
-          {/*    receiverEmail={receiver.email}*/}
-          {/*  />*/}
-          {/*</div>*/}
-          {/*<div className="p-4 border-t flex items-center">*/}
-          {/*  /!*todo make rich text*!/*/}
-          {/*  <Input*/}
-          {/*    className="flex-1"*/}
-          {/*    placeholder="Type a message"*/}
-          {/*    value={message}*/}
-          {/*    onChange={(e) => setMessage(e.target.value)}*/}
-          {/*  />*/}
-          {/*  <Button*/}
-          {/*    className="ml-4"*/}
-          {/*    onClick={() => {*/}
-          {/*      if (stompClient && message) {*/}
-          {/*        setMessage("");*/}
-          {/*        stompClient.publish({*/}
-          {/*          destination: "/app/sendMessage",*/}
-          {/*          body: JSON.stringify({*/}
-          {/*            content: message,*/}
-          {/*            chatRoomId,*/}
-          {/*            senderEmail: sender.email,*/}
-          {/*            receiverEmail: receiver.email,*/}
-          {/*          }),*/}
-          {/*        });*/}
-          {/*      }*/}
-          {/*    }}*/}
-          {/*  >*/}
-          {/*    Send*/}
-          {/*  </Button>*/}
-          {/*</div>*/}
         </div>
       </ScrollArea>
       <div className="flex-1 ">

@@ -17,19 +17,14 @@ interface BaseProps {
 interface ChatRoomProps extends BaseProps {
   chatRooms: ChatRoomResponse[];
   setActiveRoomId: Dispatch<SetStateAction<number | null>>;
-  // setActiveRoomId: (id: number) => void;
 }
 
 export const ChatRoom = memo(
   ({ chatRooms, setActiveRoomId, authUser, activeRoom }: ChatRoomProps) => {
-    const pathName = usePathname();
-    // const router = useRouter();
     const stompClient = useStompClient();
     const { removeBySender } = useChatNotification();
     const searchParams = useSearchParams();
-    // const chatId = searchParams.get("chatId");
-
-    const clearNotifications = useCallback(
+    useCallback(
       (otherUser: ConversationUserResponse) => {
         if (stompClient && stompClient.connected) {
           stompClient.publish({
@@ -55,65 +50,9 @@ export const ChatRoom = memo(
         const params = new URLSearchParams(searchParams.toString());
         params.set("chatId", room.id.toString());
         window.history.pushState(null, "", `?${params.toString()}`);
-
-        // if (stompClient && stompClient.connected) {
-        //  setActiveRoomId(room.id);
-        // router.push(`${pathName}?chatId=${room.id}`);
-        // stompClient.publish({
-        //   destination: "/app/changeRoom",
-        //   body: JSON.stringify({
-        //     chatId: room.id,
-        //      userEmail: authUser.email,
-        //    }),
-        //  });
-        //   stompClient.publish({
-        //     destination:
-        //       "/app/chatMessageNotification/deleteAllByReceiverEmailSenderEmail",
-        //     body: JSON.stringify({
-        //       receiverEmail: authUser.email,
-        //       senderEmail: otherUser.email,
-        //     }),
-        //   });
-        //   removeBySender({
-        //     stompClient,
-        //     senderEmail: otherUser.email,
-        //     receiverEmail: authUser.email,
-        //   });
-        // clearNotifications(otherUser);
-        //}
       },
-      [
-        // stompClient,
-        // setActiveRoomId,
-        // // router,
-        // pathName,
-        // authUser.email,
-        // clearNotifications,
-        searchParams,
-      ],
+      [searchParams],
     );
-
-    // useEffect(() => {
-    //   if (parseQueryParamAsInt(chatId, null)) {
-    //     const room = chatRooms.find(
-    //       (room) => room.id === parseQueryParamAsInt(chatId, null),
-    //     );
-    //     if (room) {
-    //       const otherUser = room.users.find(
-    //         ({ email }) => email !== authUser.email,
-    //       );
-    //       if (otherUser) {
-    //         clearNotifications(otherUser);
-    //       }
-    //     }
-    //   }
-    // }, [
-    //   authUser.email,
-    //   callback,
-    //   chatId,
-    //   JSON.stringify(chatRooms),
-    //   clearNotifications,
-    // ]);
 
     // console.log("active room", activeRoom);
     console.log("chat rooms", chatRooms);
