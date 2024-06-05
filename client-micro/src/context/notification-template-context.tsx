@@ -359,7 +359,7 @@ export const notificationReducer = <
 interface ProviderProps {
   children: React.ReactNode;
   notificationName: string;
-  authUser: NonNullable<Session["user"]>;
+  authUser: Session["user"];
 }
 
 export const NotificationTemplateProvider = <
@@ -385,13 +385,13 @@ export const NotificationTemplateProvider = <
     authToken: true,
     acceptHeader: "application/json",
     body: {
-      senderEmail: authUser.email,
+      senderEmail: authUser?.email,
       type: null,
     },
   });
 
   useSubscription(
-    `/user/${authUser.email}/queue/notification/${notificationName}/added`,
+    `/user/${authUser?.email}/queue/notification/${notificationName}/added`,
     (message) => {
       const newMessage = JSON.parse(message.body) satisfies T;
       console.log("ADD", newMessage.id);
@@ -426,9 +426,56 @@ export const useNotificationTemplate = <
 >() => {
   const context = React.useContext(NotificationContext);
   if (!context) {
-    throw new Error(
-      "useNotificationTemplate must be used within a NotificationTemplateProvider",
-    );
+    // throw new Error(
+    //   "useNotificationTemplate must be used within a NotificationTemplateProvider",
+    // );
+    return {
+      addNotification: (payload: T) => {},
+      removeNotification: (payload: PayloadWithStomp<R, E, T>) => {},
+      removeByType: (payload: {
+        type: E;
+        stompClient: Client;
+        notificationName: string;
+        receiverEmail: string;
+      }) => {},
+      removeBySender: (payload: {
+        senderEmail: string;
+        stompClient: Client;
+        notificationName: string;
+        receiverEmail: string;
+      }) => {},
+      removeByReference: (payload: { referenceId: number }) => {},
+      clearNotifications: (payload: {
+        stompClient: Client;
+        notificationName: string;
+        receiverEmail: string;
+      }) => {},
+      getNotificationState: () =>
+        ({
+          notifications: [],
+          total: 0,
+          totalByType: {},
+          totalBySender: {},
+        }) as NotificationState<R, E, T>,
+      getById: (id: number) => undefined as T | undefined,
+      getBySenderEmail: (senderEmail: string) => [] as T[],
+      getByType: (type: E) => [] as T[],
+      getTotalByType: (type: E) => 0,
+      getTotalBySender: (senderEmail: string) => 0,
+      getByReference: (referenceId: number) => [] as T[],
+      getTotalByReference: (referenceId: number) => 0,
+      getNotificationsGroupedBySender: () => ({
+        notifications: {},
+        total: 0,
+        totalSenders: 0,
+      }),
+      getTotals: () =>
+        ({
+          total: 0,
+          totalByType: {},
+          totalBySender: {},
+        }) as TotalsNotification,
+    };
   }
 
   const addNotification = React.useCallback(

@@ -19,7 +19,7 @@ const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export const ChatProvider: React.FC<{
   children: ReactNode;
-  authUser: NonNullable<Session["user"]>;
+  authUser: Session["user"];
 }> = ({ children, authUser }) => {
   const pathname = usePathname();
   const stompClient = useStompClient();
@@ -39,7 +39,8 @@ export const ChatProvider: React.FC<{
     if (
       pathname !== "/chat" &&
       oldPathname === "/chat" &&
-      stompClient?.connected
+      stompClient?.connected &&
+      authUser?.email
     ) {
       console.log("USE CC: Disconnecting user:", authUser.email);
       stompClient.publish({
@@ -52,7 +53,7 @@ export const ChatProvider: React.FC<{
     }
 
     setOldPathname(pathname);
-  }, [authUser.email, oldPathname, pathname, stompClient?.connected]);
+  }, [authUser?.email, oldPathname, pathname, stompClient?.connected]);
 
   return (
     <ChatContext.Provider value={{ activeChatId, setActiveChatId }}>

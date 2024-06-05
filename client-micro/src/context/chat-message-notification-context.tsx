@@ -15,7 +15,7 @@ import { Client } from "@stomp/stompjs";
 
 interface ChatMessageNotificationProviderProps {
   children: ReactNode;
-  authUser: NonNullable<Session["user"]>;
+  authUser: Session["user"];
 }
 
 export function ChatMessageNotificationProvider({
