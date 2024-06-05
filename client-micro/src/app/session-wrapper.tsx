@@ -17,7 +17,7 @@ export default function SessionWrapper({ children }: { children: ReactNode }) {
     if (status === "authenticated" && session?.user) {
       setAuthUser(session.user);
     } else {
-      setAuthUser(null);
+      setAuthUser(undefined);
     }
   }, [status, session]);
 
