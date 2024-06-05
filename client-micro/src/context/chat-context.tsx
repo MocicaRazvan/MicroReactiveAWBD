@@ -6,7 +6,7 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useStompClient } from "react-stomp-hooks";
 import { Session } from "next-auth";
 
@@ -23,6 +23,11 @@ export const ChatProvider: React.FC<{
 }> = ({ children, authUser }) => {
   const pathname = usePathname();
   const stompClient = useStompClient();
+  const searchParams = useSearchParams();
+  const chatId = searchParams.get("chatId");
+
+  console.log("chatId context", chatId);
+  console.log("searchParams context", searchParams.toString());
 
   const [activeChatId, setActiveChatId] = useState<number | null>(null);
   const [oldPathname, setOldPathname] = useState<string>(pathname);

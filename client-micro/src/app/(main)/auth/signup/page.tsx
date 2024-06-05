@@ -54,6 +54,8 @@ export default function SignUp() {
     const resp = await registerSubmit(values);
     if (resp) {
       setErrorMsg(resp.message);
+    } else {
+      router.push("/auth/signin");
     }
     setIsLoading(false);
   };

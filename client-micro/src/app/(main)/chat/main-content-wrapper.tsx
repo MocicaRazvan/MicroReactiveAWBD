@@ -45,7 +45,7 @@ export default function ChatMainContentWrapper({
   if (!uIsFinished || !rIsFinished) return <LoadingSpinner />;
 
   // console.log("connectedUsers", connectedUsers);
-  console.log("chatRooms", chatRooms);
+  // console.log("chatRooms", chatRooms);
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <ChatMainContent

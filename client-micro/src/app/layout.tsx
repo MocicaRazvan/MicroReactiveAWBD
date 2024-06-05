@@ -14,6 +14,7 @@ import { ChatMessageNotificationProvider } from "@/context/chat-message-notifica
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth-options";
 import { ChatProvider } from "@/context/chat-context";
+import SessionWrapper from "@/app/session-wrapper";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -52,23 +53,24 @@ export default async function RootLayout({
               <LennisProvder>
                 <div className="max-w-[1700px] flex-col items-center justify-center w-full mx-auto">
                   {/* <Nav /> */}
-                  {!isUser ? (
-                    children
-                  ) : (
-                    <StompProvider
-                      url={spring + "/ws/ws-service"}
-                      authUser={session.user!}
-                    >
-                      <ChatProvider authUser={session.user!}>
-                        <ChatMessageNotificationProvider
-                          authUser={session.user!}
-                        >
-                          {children}
-                        </ChatMessageNotificationProvider>
-                      </ChatProvider>
-                    </StompProvider>
-                  )}
+                  {/*{!isUser ? (*/}
+                  {/*  children*/}
+                  {/*) : (*/}
+                  {/*  <StompProvider*/}
+                  {/*    url={spring + "/ws/ws-service"}*/}
+                  {/*    authUser={session.user!}*/}
+                  {/*  >*/}
+                  {/*    <ChatProvider authUser={session.user!}>*/}
+                  {/*      <ChatMessageNotificationProvider*/}
+                  {/*        authUser={session.user!}*/}
+                  {/*      >*/}
+                  {/*        {children}*/}
+                  {/*      </ChatMessageNotificationProvider>*/}
+                  {/*    </ChatProvider>*/}
+                  {/*  </StompProvider>*/}
+                  {/*)}*/}
 
+                  <SessionWrapper>{children}</SessionWrapper>
                   <Footer />
                 </div>
                 <Toaster />

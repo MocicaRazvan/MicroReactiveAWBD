@@ -110,7 +110,7 @@ export function useFetchStream<T = any, E extends BaseError = BaseError>({
     refetchState,
   ]);
 
-  console.log(messages.length);
+  // console.log(messages.length);
   return { messages, error, isFinished, refetch };
 }
 

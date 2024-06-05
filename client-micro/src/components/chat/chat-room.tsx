@@ -54,9 +54,6 @@ export const ChatRoom = memo(
       [searchParams],
     );
 
-    // console.log("active room", activeRoom);
-    console.log("chat rooms", chatRooms);
-
     const fakeRooms = Array.from(
       { length: 20 },
       (_, i) =>
