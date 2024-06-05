@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Bell, ShoppingCartIcon } from "lucide-react";
+import { Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Fragment, useCallback } from "react";
@@ -18,7 +18,6 @@ import { useStompClient, useSubscription } from "react-stomp-hooks";
 import { usePathname, useRouter } from "next/navigation";
 import {
   ChatMessageNotificationResponse,
-  ChatMessageResponse,
   ConversationUserResponse,
 } from "@/types/dto";
 import { Session } from "next-auth";
@@ -44,6 +43,7 @@ export default function NotificationPop({ authUser }: NotificationPopProps) {
     console.log("newMessage chat notif", newMessage);
     console.log("not path", pathName);
 
+    // navigate to chat room after it is created
     if (newMessage.connectedChatRoom?.id) {
       // router.push(`/chat/?chatId=${newMessage.connectedChatRoom?.id}`);
       // setActiveChatId(newMessage.connectedChatRoom?.id);
@@ -84,7 +84,7 @@ export default function NotificationPop({ authUser }: NotificationPopProps) {
         // }, 1000);
       }
     },
-    [stompClient, router],
+    [stompClient],
   );
 
   return (

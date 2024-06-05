@@ -4,7 +4,6 @@ import {
   DoubleArrowLeftIcon,
   DoubleArrowRightIcon,
 } from "@radix-ui/react-icons";
-import { Table } from "@tanstack/react-table";
 
 import {
   Select,

@@ -63,11 +63,6 @@ export default function SinglePost() {
     },
     [post?.id, session.data?.user?.token, setPostState],
   );
-  // useEffect(() => {
-  //   if (messages.length > 0) {
-  //     setPostState(messages[0]?.model?.content);
-  //   }
-  // }, [JSON.stringify(messages)]);
 
   console.log(error);
 

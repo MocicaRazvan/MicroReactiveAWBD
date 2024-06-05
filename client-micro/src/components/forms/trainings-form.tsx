@@ -6,9 +6,8 @@ import {
   ExerciseResponse,
   TrainingResponse,
 } from "@/types/dto";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { notFound, useParams } from "next/navigation";
+import { notFound } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 import Loader from "../ui/spinner";
 import { useForm } from "react-hook-form";
@@ -20,7 +19,6 @@ import CustomCloudinaryWidget from "./cloudinary-widget";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,

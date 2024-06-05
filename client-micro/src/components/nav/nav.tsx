@@ -4,9 +4,6 @@ import { ModeToggle } from "../common/theme-switch";
 import Link from "next/link";
 
 import { useSession } from "next-auth/react";
-import { Avatar } from "../ui/avatar";
-import { AvatarImage } from "@radix-ui/react-avatar";
-import { cn } from "@/lib/utils";
 import { useMemo, useState } from "react";
 import CartPop from "./cart-pop";
 import { Home } from "lucide-react";

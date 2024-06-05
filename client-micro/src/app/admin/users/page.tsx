@@ -1,17 +1,11 @@
 "use client";
-import {
-  CustomEntityModel,
-  PageInfo,
-  PageableResponse,
-  UserDto,
-  ExerciseResponse,
-} from "@/types/dto";
-import { DataTable, Pagination } from "@/components/data-table/data-table";
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { UserDto } from "@/types/dto";
+import { DataTable } from "@/components/data-table/data-table";
+import { Suspense, useMemo, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
-import { ColumnDef, Sorting } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { ColumnDef } from "@tanstack/react-table";
+import { MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -22,13 +16,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { AuthProvider, Role, SortDirection } from "@/types/fetch-utils";
-import useFetchStream from "@/hoooks/useFetchStream";
+import { AuthProvider, Role } from "@/types/fetch-utils";
 import { BaseError } from "@/types/responses";
 import Loader from "@/components/ui/spinner";
-import { TableFilter } from "@/components/data-table/data-table";
 import { useRouter } from "next/navigation";
-import { makeSortFetchParams } from "@/lib/utils";
 import SortingButton from "@/components/common/sorting-button";
 import Link from "next/link";
 import { useTable } from "@/hoooks/useTable";
@@ -37,49 +28,7 @@ export default function Page() {
   const router = useRouter();
   const [role, setRole] = useState<Role | "">("");
   const [provider, setProvider] = useState<AuthProvider | "">("");
-  // const [filter, setFilter] = useState<TableFilter>({
-  //   key: "email",
-  //   value: "",
-  //   placeholder: "Search by email",
-  // });
-  // const [role, setRole] = useState<Role | "">("");
-  // // params  email:value
-  // const [sort, setSort] = useState<
-  //   Record<"email" | "firstName" | "lastName", SortDirection>
-  // >({ email: "none", firstName: "none", lastName: "none" });
-  //
-  // const [pageInfo, setPageInfo] = useState<PageInfo>({
-  //   currentPage: 0,
-  //   totalPages: 1,
-  //   totalElements: 10,
-  //   pageSize: 10,
-  // });
-  //
-  // const { messages, error } = useFetchStream<
-  //   PageableResponse<CustomEntityModel<UserDto>>,
-  //   BaseError
-  // >({
-  //   path: "/users",
-  //   method: "PATCH",
-  //   authToken: true,
-  //   body: {
-  //     page: pageInfo.currentPage,
-  //     size: pageInfo.pageSize,
-  //     sortingCriteria: makeSortFetchParams(sort),
-  //   },
-  //   queryParams: { email: filter.value },
-  //   arrayQueryParam: { roles: [role] },
-  // });
-  //
-  // useEffect(() => {
-  //   if (messages && messages.length > 0 && messages[0].pageInfo) {
-  //     setPageInfo((prev) => ({
-  //       ...prev,
-  //       totalPages: messages[0].pageInfo.totalPages,
-  //       totalElements: messages[0].pageInfo.totalElements,
-  //     }));
-  //   }
-  // }, [JSON.stringify(messages)]);
+
   const {
     sort,
     setSort,

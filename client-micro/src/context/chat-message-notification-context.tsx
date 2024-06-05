@@ -1,17 +1,15 @@
 "use client";
 
 import { ReactNode, useCallback } from "react";
-import { useSession } from "next-auth/react";
 import {
   NotificationTemplateProvider,
   useNotificationTemplate,
-} from "@/context/chat-message-notification-template-context";
+} from "@/context/notification-template-context";
 import {
   ChatMessageNotificationResponse,
   ChatMessageNotificationType,
   ChatRoomResponse,
 } from "@/types/dto";
-import { useStompClient } from "react-stomp-hooks";
 import { Session } from "next-auth";
 import { Client } from "@stomp/stompjs";
 

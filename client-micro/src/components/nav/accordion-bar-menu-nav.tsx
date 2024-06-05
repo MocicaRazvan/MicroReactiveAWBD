@@ -1,4 +1,4 @@
-import { Dispatch, Fragment, memo, SetStateAction, useCallback } from "react";
+import { Dispatch, memo, SetStateAction, useCallback } from "react";
 import { LinksProps } from "@/components/nav/menu-bar-menu-nav";
 import {
   Accordion,
@@ -6,7 +6,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { MenuBarItemsNav } from "@/components/nav/menu-bar-items-nav";
 import { Role } from "@/types/fetch-utils";
 import { shouldRenderLink } from "@/components/nav/links";
 import Link from "next/link";

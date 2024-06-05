@@ -90,13 +90,6 @@ export default function UserPage() {
 
   const handleStartChat = useCallback(() => {
     if (stompClient && stompClient.connected && stateUser && authUser) {
-      // stompClient?.publish({
-      //   destination: "/app/addUser",
-      //   body: JSON.stringify({
-      //     email: stateUser.email,
-      //     connectedStatus: "OFFLINE",
-      //   }),
-      // });
       stompClient?.publish({
         destination: "/app/addChatRoom",
         body: JSON.stringify({

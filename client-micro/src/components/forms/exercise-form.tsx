@@ -121,7 +121,7 @@ export default function ExerciseForm({
         setIsLoading(false);
       }
     },
-    [callback, method, path, router, session.data?.user?.token],
+    [callback, method, path, router, session.data?.user?.token, title],
   );
   return (
     <Card className="max-w-6xl w-full sm:px-2 md:px-5 py-6">

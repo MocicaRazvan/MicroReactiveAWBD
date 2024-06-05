@@ -57,7 +57,6 @@ export function UpdateAccordion({
   const router = useRouter();
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [open, setOpen] = useState(true);
   const session = useSession();
 
   console.log(session);

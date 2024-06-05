@@ -1,5 +1,5 @@
 "use client";
-import { DataTable, TableFilter } from "@/components/data-table/data-table";
+import { DataTable } from "@/components/data-table/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,30 +7,18 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Loader from "@/components/ui/spinner";
-import useFetchStream from "@/hoooks/useFetchStream";
-import {
-  CustomEntityModel,
-  PageInfo,
-  PageableResponse,
-  PostResponse,
-  TrainingResponse,
-  ExerciseResponse,
-} from "@/types/dto";
+import { TrainingResponse } from "@/types/dto";
 import { BaseError } from "@/types/responses";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Suspense, useMemo } from "react";
 import { useSession } from "next-auth/react";
-import AlertDialogApprovePost from "@/components/dialogs/posts/approve-post";
 import SortingButton from "@/components/common/sorting-button";
-import { SortDirection } from "@/types/fetch-utils";
-import { makeSortFetchParams } from "@/lib/utils";
 import AlertDialogApproveTraining from "@/components/dialogs/trainings/approve-training";
 import { ExtraTableProps } from "@/types/tables";
 import { format, parseISO } from "date-fns";

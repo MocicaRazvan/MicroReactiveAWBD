@@ -1,6 +1,6 @@
 "use client";
 
-import { DataTable, TableFilter } from "@/components/data-table/data-table";
+import { DataTable } from "@/components/data-table/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,25 +12,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Loader from "@/components/ui/spinner";
-import useFetchStream from "@/hoooks/useFetchStream";
-import {
-  CustomEntityModel,
-  PageInfo,
-  PageableResponse,
-  PostResponse,
-  ExerciseResponse,
-} from "@/types/dto";
+import { PostResponse } from "@/types/dto";
 import { BaseError } from "@/types/responses";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import AlertDialogApprovePost from "@/components/dialogs/posts/approve-post";
 import SortingButton from "@/components/common/sorting-button";
-import { SortDirection } from "@/types/fetch-utils";
-import { makeSortFetchParams } from "@/lib/utils";
 import { ExtraTableProps } from "@/types/tables";
 import { format, parseISO } from "date-fns";
 import { useTable } from "@/hoooks/useTable";
@@ -42,60 +33,7 @@ export default function PostsTable({ path, title, forWhom }: Props) {
   const session = useSession();
   const { userId } = useParams();
   const isAdmin = session?.data?.user?.role === "ROLE_ADMIN";
-  // const [filter, setFilter] = useState<TableFilter>({
-  //   key: "title",
-  //   value: "",
-  //   placeholder: "Search by title",
-  // });
-  // const [sort, setSort] = useState<
-  //   Record<"title" | "id" | "createdAt", SortDirection>
-  // >({
-  //   title: "none",
-  //   id: "none",
-  //   createdAt: "none",
-  // });
-  //
 
-  //
-  // const [pageInfo, setPageInfo] = useState<PageInfo>({
-  //   currentPage: 0,
-  //   totalPages: 1,
-  //   totalElements: 10,
-  //   pageSize: 10,
-  // });
-  //
-  // const [data, setData] = useState<PostResponse[]>();
-  // const { messages, error } = useFetchStream<
-  //   PageableResponse<CustomEntityModel<PostResponse>>,
-  //   BaseError
-  // >({
-  //   path,
-  //   method: "PATCH",
-  //   authToken: true,
-  //   body: {
-  //     page: pageInfo.currentPage,
-  //     size: pageInfo.pageSize,
-  //     sortingCriteria: makeSortFetchParams(sort),
-  //   },
-  //   queryParams: { title: filter.value },
-  //   cache: "no-cache",
-  // });
-  //
-  // useEffect(() => {
-  //   if (messages && messages.length > 0 && messages[0].pageInfo) {
-  //     setPageInfo((prev) => ({
-  //       ...prev,
-  //       totalPages: messages[0].pageInfo.totalPages,
-  //       totalElements: messages[0].pageInfo.totalElements,
-  //     }));
-  //   }
-  // }, [JSON.stringify(messages)]);
-  //
-  // useEffect(() => {
-  //   if (messages && messages.length > 0) {
-  //     setData(messages.map(({ content }) => content.content));
-  //   }
-  // }, [JSON.stringify(messages)]);
   const {
     sort,
     setSort,

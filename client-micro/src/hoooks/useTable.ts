@@ -1,12 +1,7 @@
 import { SortDirection } from "@/types/fetch-utils";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { TableFilter } from "@/components/data-table/data-table";
-import {
-  CustomEntityModel,
-  ExerciseResponse,
-  PageableResponse,
-  PageInfo,
-} from "@/types/dto";
+import { CustomEntityModel, PageableResponse, PageInfo } from "@/types/dto";
 import useFetchStream, { UseFetchStreamProps } from "@/hoooks/useFetchStream";
 import { BaseError } from "@/types/responses";
 import {

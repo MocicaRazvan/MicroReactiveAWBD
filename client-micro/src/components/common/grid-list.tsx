@@ -7,14 +7,7 @@ import {
   TitleBodyUser,
 } from "@/types/dto";
 import ItemCard from "./single/item-card";
-import {
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { DataTablePagination } from "../data-table/data-table-pagination";
 import {
   cn,

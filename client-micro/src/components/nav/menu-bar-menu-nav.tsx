@@ -1,5 +1,4 @@
 "use client";
-import { Role } from "@/types/fetch-utils";
 import { Session } from "next-auth";
 import { memo } from "react";
 import { isDeepEqual } from "@/lib/utils";

@@ -15,18 +15,14 @@ import {
   useSearchParams,
 } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Loader from "@/components/ui/spinner";
 import Image from "next/image";
 import noImg from "../../../../../../../public/noImage.jpg";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import PayDrawer from "./pay-drawer";
-import useWindowSize from "react-use/lib/useWindowSize";
 import Confetti from "react-confetti";
-import { Code } from "lucide-react";
-import { getCSSVariableValue, roundToDecimalPlaces } from "@/lib/utils";
-import { useSearchParam } from "react-use";
+import { roundToDecimalPlaces } from "@/lib/utils";
 
 interface OrderContentProps extends Omit<OrderContentWrapperProps, "authUser"> {
   orderResponse: OrderResponse;

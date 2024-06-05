@@ -1,12 +1,5 @@
+import { Control, Path } from "react-hook-form";
 import {
-  Control,
-  UseFormRegister,
-  FieldValues,
-  ControllerRenderProps,
-  Path,
-} from "react-hook-form";
-import {
-  Form,
   FormControl,
   FormField,
   FormItem,
@@ -14,7 +7,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { TitleBody } from "@/types/dto";
 import Editor from "../editor/editor";
 

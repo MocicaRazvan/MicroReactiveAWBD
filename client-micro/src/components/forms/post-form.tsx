@@ -115,7 +115,7 @@ export default function PostForm({
         setIsLoading(false);
       }
     },
-    [method, path, router, session.data?.user?.token],
+    [method, path, router, session.data?.user?.token, title],
   );
   if (!tagsOptions) return null;
   if (!session.data?.user?.token) return null;

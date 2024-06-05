@@ -11,9 +11,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { fetchStream } from "@/hoooks/fetchStream";
-import { Approve, PostResponse, UserDto } from "@/types/dto";
-import { useRouter } from "next/navigation";
-import { Dispatch, SetStateAction } from "react";
+import { Approve } from "@/types/dto";
 import { toast } from "@/components/ui/use-toast";
 
 interface Props {

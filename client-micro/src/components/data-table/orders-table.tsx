@@ -11,24 +11,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Loader from "@/components/ui/spinner";
-import useFetchStream from "@/hoooks/useFetchStream";
-import {
-  CustomEntityModel,
-  OrderResponse,
-  PageInfo,
-  PageableResponse,
-  ExerciseResponse,
-} from "@/types/dto";
+import { OrderResponse } from "@/types/dto";
 import { BaseError } from "@/types/responses";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import SortingButton from "@/components/common/sorting-button";
-import { SortDirection } from "@/types/fetch-utils";
-import { makeSortFetchParams } from "@/lib/utils";
 import { ExtraTableProps } from "@/types/tables";
 import { parseISO, format } from "date-fns";
 import { useTable } from "@/hoooks/useTable";
@@ -39,52 +30,6 @@ export default function OrdersTable({ path, title, forWhom }: Props) {
   const router = useRouter();
   const session = useSession();
   const isAdmin = session?.data?.user?.role === "ROLE_ADMIN";
-
-  // const [sort, setSort] = useState<Record<"id" | "createdAt", SortDirection>>({
-  //   id: "none",
-  //   createdAt: "none",
-  // });
-  //
-  // const [pageInfo, setPageInfo] = useState<PageInfo>({
-  //   currentPage: 0,
-  //   totalPages: 1,
-  //   totalElements: 10,
-  //   pageSize: 10,
-  // });
-  // const [data, setData] = useState<OrderResponse[]>();
-  //
-  // const { messages, error } = useFetchStream<
-  //   PageableResponse<CustomEntityModel<OrderResponse>>,
-  //   BaseError
-  // >({
-  //   path,
-  //   method: "PATCH",
-  //   authToken: true,
-  //   body: {
-  //     page: pageInfo.currentPage,
-  //     size: pageInfo.pageSize,
-  //     sortingCriteria: makeSortFetchParams(sort),
-  //   },
-  //   cache: "no-cache",
-  // });
-  //
-  // useEffect(() => {
-  //   if (messages && messages.length > 0 && messages[0].pageInfo) {
-  //     setPageInfo((prev) => ({
-  //       ...prev,
-  //       totalPages: messages[0].pageInfo.totalPages,
-  //       totalElements: messages[0].pageInfo.totalElements,
-  //     }));
-  //   }
-  // }, [JSON.stringify(messages)]);
-  //
-  // useEffect(() => {
-  //   if (messages && messages.length > 0) {
-  //     setData(messages.map(({ content }) => content.content));
-  //   }
-  // }, [JSON.stringify(messages)]);
-  //
-  // console.log(data);
 
   const {
     sort,

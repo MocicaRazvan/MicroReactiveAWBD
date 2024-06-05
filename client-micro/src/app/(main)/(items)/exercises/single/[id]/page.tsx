@@ -2,45 +2,13 @@
 import CustomImageCarousel from "@/components/common/custom-image-crousel";
 import CustomVideoCarousel from "@/components/common/custom-video-crousel";
 import AlertDialogDeleteExercise from "@/components/dialogs/exercises/delete-exercise";
-import ExerciseForm from "@/components/forms/exercise-form";
 import Loader from "@/components/ui/spinner";
-import useFetchStream from "@/hoooks/useFetchStream";
-import {
-  ExerciseResponse,
-  ExerciseResponseWithTrainingCount,
-} from "@/types/dto";
-import { BaseError } from "@/types/responses";
-import { useSession } from "next-auth/react";
-import { notFound, useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { notFound } from "next/navigation";
 import { useGetExercise } from "@/app/(main)/(items)/exercises/single/hook";
 import { Button } from "@/components/ui/button";
 import ElementHeader from "@/components/common/single/element-header";
 
 export default function SingleExercise() {
-  // const [exerciseState, setExerciseState] = useState<ExerciseResponse | null>(
-  //   null
-  // );
-  // const { id } = useParams();
-  // const session = useSession();
-  // const router = useRouter();
-  //
-  // const authUser = session.data?.user;
-  //
-  // const { messages, error, refetch } = useFetchStream<
-  //   ExerciseResponseWithTrainingCount,
-  //   BaseError
-  // >({
-  //   path: `/exercises/withTrainingCount/${id}`,
-  //   method: "GET",
-  //   authToken: true,
-  // });
-  //
-  // useEffect(() => {
-  //   if (messages.length > 0) {
-  //     setExerciseState(messages[0]);
-  //   }
-  // }, [JSON.stringify(messages)]);
   const {
     exerciseState,
     setExerciseState,
@@ -110,33 +78,6 @@ export default function SingleExercise() {
           )}
         </div>
       )}
-      {/*{isOwner && messages[0].trainingCount === 0 && (*/}
-      {/*  <Accordion*/}
-      {/*    type="single"*/}
-      {/*    collapsible*/}
-      {/*    className="w-1/2 mx-auto mt-10 z-50"*/}
-      {/*  >*/}
-      {/*    <AccordionItem value="item-1">*/}
-      {/*      <AccordionTrigger>Update Exercise</AccordionTrigger>*/}
-      {/*      <AccordionContent>*/}
-      {/*        <ExerciseForm*/}
-      {/*          path={`/exercises/update/${exercise.id}`}*/}
-      {/*          method="PUT"*/}
-      {/*          body={exercise.body}*/}
-      {/*          title={exercise.title}*/}
-      {/*          images={exercise.images}*/}
-      {/*          videos={exercise.videos}*/}
-      {/*          muscleGroups={exercise.muscleGroups.map((m) => ({*/}
-      {/*            label: m,*/}
-      {/*            value: m,*/}
-      {/*          }))}*/}
-      {/*          submitText="Update Exercise"*/}
-      {/*          callback={refetch}*/}
-      {/*        />*/}
-      {/*      </AccordionContent>*/}
-      {/*    </AccordionItem>*/}
-      {/*  </Accordion>*/}
-      {/*)}*/}
     </section>
   );
 }

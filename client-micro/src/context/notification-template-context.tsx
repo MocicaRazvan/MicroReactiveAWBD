@@ -143,19 +143,6 @@ export interface NotificationContextType<
   dispatch: React.Dispatch<NotificationAction<R, E, T>>;
 }
 
-// const initialState = {
-//   notifications: [],
-//   total: 0,
-//   totalByType: {},
-//   totalBySender: {},
-// };
-//
-//
-// export const createNotificationTemplateContext = <
-//   R extends IdDto,
-//   E extends string,
-//   T extends NotificationTemplateResponse<R, E>,
-// >() => React.createContext<NotificationContextType<R, E, T> | null>(null);
 const initialState: NotificationState<any, any, any> = {
   notifications: [],
   total: 0,

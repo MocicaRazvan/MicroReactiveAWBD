@@ -1,11 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import {
-  ChatMessageResponse,
-  ConversationUserBase,
-  ConversationUserResponse,
-} from "@/types/dto";
+import { ChatMessageResponse, ConversationUserResponse } from "@/types/dto";
 import useFetchStream from "@/hoooks/useFetchStream";
 import Conversation from "@/components/chat/conversation";
 import LoadingSpinner from "@/components/common/loading-spinner";

@@ -1,7 +1,6 @@
 "use client";
 import Loader from "@/components/ui/spinner";
 import { notFound, useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
 import useFetchStream from "@/hoooks/useFetchStream";
 
 export default function ConfirmEmailPage() {
