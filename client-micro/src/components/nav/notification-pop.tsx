@@ -28,6 +28,21 @@ interface NotificationPopProps {
   authUser: NonNullable<Session["user"]>;
 }
 
+function isChatMessageNotificationResponseArray(
+  value: any,
+): value is ChatMessageNotificationResponse[] {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (item) =>
+        item &&
+        typeof item === "object" &&
+        "reference" in item &&
+        "receiver" in item,
+    )
+  );
+}
+
 export default function NotificationPop({ authUser }: NotificationPopProps) {
   const { getNotificationsGroupedBySender, getTotals } = useChatNotification();
   const totalNotifications = getTotals().total;
@@ -113,24 +128,31 @@ export default function NotificationPop({ authUser }: NotificationPopProps) {
               )}
             >
               {Object.entries(notificationsGroupedBySender.notifications).map(
-                ([sender, senderNotif], i) => (
-                  <Fragment key={sender}>
-                    <DropdownMenuItem onClick={(e) => e.preventDefault()}>
-                      <div
-                        // href={`/chat/?chatId=${senderNotif[0].reference.id}`}
-                        onClick={() => handleNavigation(senderNotif[0])}
-                        className=" transitiion-all font-bold hover:underline cursor-pointer hover:bg-accent hover:text-accent-foreground"
-                      >
-                        <p>
-                          You have {senderNotif.length} from {sender}
-                        </p>
-                      </div>
-                    </DropdownMenuItem>
-                    {i !== notificationsGroupedBySender.totalSenders - 1 && (
-                      <DropdownMenuSeparator />
-                    )}
-                  </Fragment>
-                ),
+                ([sender, senderNotif], i) => {
+                  if (!isChatMessageNotificationResponseArray(senderNotif)) {
+                    return null;
+                  }
+                  return (
+                    <Fragment key={sender}>
+                      <DropdownMenuItem onClick={(e) => e.preventDefault()}>
+                        <div
+                          // href={`/chat/?chatId=${senderNotif[0].reference.id}`}
+                          onClick={() => {
+                            handleNavigation(senderNotif[0]);
+                          }}
+                          className=" transitiion-all font-bold hover:underline cursor-pointer hover:bg-accent hover:text-accent-foreground"
+                        >
+                          <p>
+                            You have {senderNotif.length} from {sender}
+                          </p>
+                        </div>
+                      </DropdownMenuItem>
+                      {i !== notificationsGroupedBySender.totalSenders - 1 && (
+                        <DropdownMenuSeparator />
+                      )}
+                    </Fragment>
+                  );
+                },
               )}
             </ScrollArea>
           </DropdownMenuGroup>

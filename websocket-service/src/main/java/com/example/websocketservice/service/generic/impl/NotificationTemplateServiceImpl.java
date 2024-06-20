@@ -189,6 +189,18 @@ public abstract class NotificationTemplateServiceImpl<R extends IdGenerated, RRE
         }
     }
 
+
+    public CompletableFuture<Void> notifyDeleteByReferenceId(Long referenceId, List<String> receiverEmails) {
+        return CompletableFuture
+                .runAsync(() -> CompletableFuture.allOf(
+                        receiverEmails.stream()
+                                .map(email -> CompletableFuture.runAsync(() ->
+                                        messagingTemplate.convertAndSendToUser(email, "/queue/notification/" + notificationName + "/removed", referenceId.toString()), asyncExecutor))
+                                .toArray(CompletableFuture[]::new)
+                ).join(), asyncExecutor);
+    }
+
+
     protected abstract MODEL createModelInstance(ConversationUser sender, ConversationUser receiver, E type, R reference, String content, String extraLink);
 
 }

@@ -37,6 +37,11 @@ export default function Conversation({
     receiver.connectedChatRoom?.id &&
     sender.connectedChatRoom?.id === receiver.connectedChatRoom?.id;
 
+  console.log("Same chat", areInTheSameChat);
+  console.log("Same chat rec", receiver.connectedChatRoom?.id);
+  console.log("Same chat send", sender.connectedChatRoom?.id);
+  console.log("Same chat send email", sender.email);
+
   const updateMessages = (
     messages: ChatMessageResponse[],
     newMessage: ChatMessageResponse,

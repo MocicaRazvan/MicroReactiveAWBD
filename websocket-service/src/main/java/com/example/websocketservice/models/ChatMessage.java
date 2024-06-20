@@ -5,6 +5,8 @@ import com.example.websocketservice.utils.Transformable;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -21,14 +23,17 @@ public class ChatMessage extends IdGenerated implements Transformable<ChatMessag
 //    private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "sender_id", nullable = false)
     private ConversationUser sender;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "receiver_id", nullable = false)
     private ConversationUser receiver;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "chat_room_id", nullable = false)
     private ChatRoom chatRoom;
 

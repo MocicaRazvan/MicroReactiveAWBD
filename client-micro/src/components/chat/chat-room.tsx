@@ -8,10 +8,14 @@ import { cn, isDeepEqual, parseQueryParamAsInt } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useStompClient } from "react-stomp-hooks";
 import { useChatNotification } from "@/context/chat-message-notification-context";
+import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
+import DeleteChatRoomDialog from "@/components/dialogs/chat/delete-chat-room";
 
 interface BaseProps {
   activeRoom: ChatRoomResponse | null;
   authUser: NonNullable<Session["user"]>;
+  handleRoomDelete: (chatRoomId: number) => Promise<void>;
 }
 
 interface ChatRoomProps extends BaseProps {
@@ -20,7 +24,13 @@ interface ChatRoomProps extends BaseProps {
 }
 
 export const ChatRoom = memo(
-  ({ chatRooms, setActiveRoomId, authUser, activeRoom }: ChatRoomProps) => {
+  ({
+    chatRooms,
+    setActiveRoomId,
+    authUser,
+    activeRoom,
+    handleRoomDelete,
+  }: ChatRoomProps) => {
     const stompClient = useStompClient();
     const { removeBySender } = useChatNotification();
     const searchParams = useSearchParams();
@@ -71,6 +81,7 @@ export const ChatRoom = memo(
                 callback={callback}
                 activeRoom={activeRoom}
                 room={room}
+                handleRoomDelete={handleRoomDelete}
               />
             </div>
           ))}{" "}
@@ -96,7 +107,13 @@ interface ChatRoomItemProps extends BaseProps {
 }
 
 const ChatRoomItem = memo(
-  ({ authUser, callback, activeRoom, room }: ChatRoomItemProps) => {
+  ({
+    authUser,
+    callback,
+    activeRoom,
+    room,
+    handleRoomDelete,
+  }: ChatRoomItemProps) => {
     const otherUser = room.users.find(({ email }) => email !== authUser.email);
     const isActive = activeRoom?.id === room.id;
     const { getByReference } = useChatNotification();
@@ -125,6 +142,20 @@ const ChatRoomItem = memo(
                   : "bg-destructive",
               )}
             />
+            {otherUser.connectedChatRoom?.id !== room.id && (
+              <DeleteChatRoomDialog
+                handleDelete={() => handleRoomDelete(room.id)}
+                anchor={
+                  <Button
+                    variant="destructive"
+                    className="py-1 px-2 transition-all hover:shadow-sm hover:scale-110"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Trash2 className="w-4 h-16" />
+                  </Button>
+                }
+              />
+            )}
           </div>
           <div>
             <p

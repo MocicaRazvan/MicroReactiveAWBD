@@ -25,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 
 @Service
@@ -37,6 +39,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     private final ChatMessageMapper chatMessageMapper;
     private final SimpMessagingTemplate messagingTemplate;
     private final ConversationUserService conversationUserService;
+    private final Executor asyncExecutor;
+
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -108,4 +112,6 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                 .stream().map(chatMessageMapper::fromModelToResponse)
                 .toList();
     }
+
+
 }

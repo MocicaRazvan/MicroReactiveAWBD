@@ -8,6 +8,4 @@ import com.example.websocketservice.repositories.generic.NotificationTemplateRep
 
 public interface ChatMessageNotificationRepository extends
         NotificationTemplateRepository<ChatRoom, ChatMessageNotificationType, ChatMessageNotification> {
-
-
 }

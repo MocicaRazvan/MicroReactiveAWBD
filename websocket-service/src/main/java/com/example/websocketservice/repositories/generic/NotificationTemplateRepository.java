@@ -38,5 +38,8 @@ public interface NotificationTemplateRepository<R extends IdGenerated, E extends
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     void deleteAllBySenderIdAndReceiverId(Long senderId, Long receiverId);
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    void deleteAllByReferenceId(Long referenceId);
+
 
 }

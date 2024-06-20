@@ -7,6 +7,8 @@ import com.example.websocketservice.utils.Transformable;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -28,6 +30,7 @@ public class ConversationUser extends IdGenerated implements Transformable<Conve
     private ConnectedStatus connectedStatus;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     @JoinColumn(name = "connected_chat_room_id")
     private ChatRoom connectedChatRoom;
 

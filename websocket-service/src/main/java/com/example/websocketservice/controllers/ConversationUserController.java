@@ -22,7 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class ConversationUserController {
-    // todo sort order users and conversation like proiect sem1
+    // todo validation !!!!!!
+    // todo sort order users and conversation like project sem1
     private final ConversationUserService conversationUserService;
     private final SimpMessagingTemplate simpMessagingTemplate;
 

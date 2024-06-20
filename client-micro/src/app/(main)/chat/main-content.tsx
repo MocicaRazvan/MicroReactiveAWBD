@@ -4,7 +4,7 @@ import {
   useStompClient,
   useSubscription,
 } from "react-stomp-hooks";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ChatRoomResponse,
   ConversationUserPayload,
@@ -17,6 +17,7 @@ import ConversationWrapper from "@/components/chat/conversation-wrapper";
 import { ChatRoom } from "@/components/chat/chat-room";
 import { useChatNotification } from "@/context/chat-message-notification-context";
 import { parseQueryParamAsInt } from "@/lib/utils";
+import { fetchStream } from "@/hoooks/fetchStream";
 
 // import { useChatContext } from "@/context/chat-context";
 
@@ -32,6 +33,7 @@ export default function ChatMainContent({
   authUser,
 }: ChatMainContentProps) {
   const stompClient = useStompClient();
+  const router = useRouter();
 
   const searchParams = useSearchParams();
   const chatId = searchParams.get("chatId");
@@ -70,7 +72,19 @@ export default function ChatMainContent({
     if (activeRoomId) {
       const room = chatRooms.find((room) => room.id === activeRoomId);
       if (room) {
-        setActiveRoom(room);
+        const users = [
+          ...room.users.filter(({ email }) => email !== authUser.email),
+          {
+            ...room.users.find(({ email }) => email === authUser.email),
+            connectedChatRoom: room,
+          },
+        ] as ConversationUserResponse[];
+
+        console.log(
+          "rue",
+          room.users.map((user) => user.connectedChatRoom?.id),
+        );
+        setActiveRoom({ ...room, users });
       } else {
         setActiveRoom(null);
         setActiveRoomId(null);
@@ -101,6 +115,12 @@ export default function ChatMainContent({
       const filteredRooms = prev.filter((room) => room.id !== newMessage.id);
       return [...filteredRooms, newMessage];
     });
+  });
+  useSubscription(`/user/${authUser.email}/chatRooms/delete`, (message) => {
+    // console.log("chat rooms", message);
+    const newMessage = JSON.parse(message.body);
+    console.log("chat rooms delete", newMessage);
+    setChatRooms((prev) => prev.filter((room) => room.id !== newMessage.id));
   });
 
   const [clientInitialized, setClientInitialized] = useState(false);
@@ -201,6 +221,28 @@ export default function ChatMainContent({
     activeRoomId,
   ]);
 
+  const handleRoomDelete = useCallback(
+    async (chatRoomId: number) => {
+      if (!authUser?.email || !authUser?.token) return;
+      const { messages, error, isFinished } = await fetchStream({
+        path: "/ws-http/chatRooms",
+        method: "DELETE",
+        body: { chatRoomId, senderEmail: authUser.email },
+        acceptHeader: "application/json",
+        token: authUser.token,
+      });
+      if (error) {
+        console.error("Error deleting chat room:", error);
+        return;
+      } else {
+        console.log("Chat room deleted");
+        setChatRooms((prev) => prev.filter((room) => room.id !== chatRoomId));
+        router.push("/chat");
+      }
+    },
+    [authUser?.email, router, authUser?.token],
+  );
+
   return (
     <div className="px-10 min-h-[1000px] pt-10 ">
       <h1 className="text-4xl font-bold tracking-tighter mb-10 text-center">
@@ -220,6 +262,7 @@ export default function ChatMainContent({
             // setActiveRoomId={setActiveChatId}
             activeRoom={activeRoom}
             authUser={authUser}
+            handleRoomDelete={handleRoomDelete}
           />
         </div>
 

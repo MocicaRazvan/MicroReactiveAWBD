@@ -5,6 +5,8 @@ import com.example.websocketservice.utils.Transformable;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -32,6 +34,7 @@ public abstract class NotificationTemplate<R extends IdGenerated, E extends Enum
     private E type;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "reference_id", nullable = false)
     private R reference;
 

@@ -18,5 +18,6 @@ public interface ChatRoomService {
 
 
     List<ChatRoomResponse> getChatRooms(String email);
-    
+
+    void deleteChatRoom(Long id, String senderEmail);
 }

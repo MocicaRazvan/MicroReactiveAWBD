@@ -5,6 +5,7 @@ import com.example.websocketservice.dtos.errors.BaseErrorResponse;
 import com.example.websocketservice.dtos.errors.WebSocketErrorResponse;
 import com.example.websocketservice.exceptions.MoreThenOneChatRoom;
 import com.example.websocketservice.exceptions.SameUserChatRoom;
+import com.example.websocketservice.exceptions.UserIsConnectedToTheRoom;
 import com.example.websocketservice.exceptions.notFound.NotFoundBase;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class Advice extends BaseAdvice {
     private final SimpMessagingTemplate simpMessagingTemplate;
 
 
-    @ExceptionHandler({NotFoundBase.class, MoreThenOneChatRoom.class, SameUserChatRoom.class})
+    @ExceptionHandler({NotFoundBase.class, MoreThenOneChatRoom.class, SameUserChatRoom.class, UserIsConnectedToTheRoom.class})
     public ResponseEntity<BaseErrorResponse> handleBadRequest(RuntimeException e, HttpServletRequest request) {
 
         return handleWithMessage(HttpStatus.BAD_REQUEST, e, request);
